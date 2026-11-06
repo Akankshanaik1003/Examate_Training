@@ -7,7 +7,6 @@ A small Python project for working with sugarcane variety records from Maharasht
 ## Progress log
 
 ### Day 1 - Project setup
-> TODO: fill in what you did on Day 1 (for example: created the GitHub repo, set up the folder, installed Python and Git, first commit). Keep it to a few bullet points.
 
 ### Day 2 - Records, data access and CLI
 - Hand-entered **16 sugarcane varieties** into `data/sample_records.json`, each checked against the MPKV PDF.
@@ -103,5 +102,3 @@ A copy is kept at `data/source/mpkv_sugarcane_varieties.pdf`.
 
 Each file is committed on its own with a message starting `D2:`. Check `git status` before committing and make sure `.venv` never shows up as staged.
 
-## Next steps
-> TODO: add what Day 3 will cover.
