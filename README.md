@@ -1,30 +1,107 @@
 # CaneMitra
 
-**Domain:** Agriculture (Sugarcane, Maharashtra)
-**Student:** Akanksha Kishor Naik | 2124UCEF2049 | CSE | Team SJ-01
+A small Python project for working with sugarcane variety records from Maharashtra. The records are hand-entered from the MPKV (Mahatma Phule Krishi Vidyapeeth) sugarcane varieties PDF and can be searched and counted from the command line.
 
-## Product
-CaneMitra answers sugarcane questions for Maharashtra farmers using MPKV Rahuri, the Directorate of Sugarcane Development (DSD) and TNAU guides, and works out the harvest window for your planting date.
+**Status:** Day 2 of the build is complete.
 
-## User
-A sugarcane farmer with 4 acres of medium-deep black soil near Kopargaon.
+## Progress log
 
-## Problem
-The farmer is deciding whether to plant Phule 265 as preseasonal or suru cane this October. The right answer changes with the season (adsali, preseasonal, suru) and the state, and units vary (kg/ha vs kg/acre, t/ha), so generic or other-state advice can mislead.
+### Day 1 - Project setup
+> TODO: fill in what you did on Day 1 (for example: created the GitHub repo, set up the folder, installed Python and Git, first commit). Keep it to a few bullet points.
 
-## Data source
-- MPKV Rahuri: Sugarcane PDF, "Improved / Hybrid Varieties of Sugarcane" (PDF)
-- DSD: Maharashtra-recommended varieties, "Varieties.pdf" (PDF)
-- TNAU Agritech: sugarcane crop page (HTML)
+### Day 2 - Records, data access and CLI
+- Hand-entered **16 sugarcane varieties** into `data/sample_records.json`, each checked against the MPKV PDF.
+- **S1:** `day02_s1.py` loads the records, prints them all, searches by keyword and counts records per season and per institute.
+- **S2:** moved the logic into a reusable package, `app/records.py` (load, search, count, get by id), with a menu-driven command line in `app/cli.py`.
+- Added a virtual environment, `requirements.txt` and `.gitignore`.
+- Added the original MPKV PDF to the repo as the source for the data.
 
-## Day-wise build
-| Day | Task | Files |
-|-----|------|-------|
-| D1 | Project card, intro script, menu loop | README.md, day01_intro.py, day01_menu.py |
+## Project structure
+
+```
+.
+├── README.md
+├── .gitignore
+├── requirements.txt
+├── day02_s1.py              # S1: standalone script
+├── app/
+│   ├── __init__.py          # empty, marks app as a package
+│   ├── records.py           # load_records, search, count_by, get_by_id
+│   └── cli.py               # command-line menu
+└── data/
+    ├── sample_records.json  # 16 variety records
+    └── source/
+        └── mpkv_sugarcane_varieties.pdf   # original source document
+```
+
+## Setup (Windows)
+
+```
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+Day 2 uses only the Python standard library, so there is nothing to install yet. When later days add packages, install them and run `pip freeze > requirements.txt`.
 
 ## How to run
+
+Run both commands from the repo root.
+
+**S1 script** - prints all records, then asks for a keyword and shows counts:
 ```
-python day01_intro.py
-python day01_menu.py
+python day02_s1.py
 ```
-https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html
+
+**CLI menu:**
+```
+python -m app.cli
+```
+
+Menu options:
+
+| Choice | Action |
+|--------|--------|
+| 1 | List all varieties |
+| 2 | Search by keyword (name, season or traits) |
+| 3 | Count varieties per season |
+| 4 | Count varieties per institute |
+| 5 | Get one variety by id (for example `V10`) |
+| 0 | Exit |
+
+Example keywords to try: `jaggery`, `saline`, `smut`, `drought`, `adsali`.
+
+## Data format
+
+Each record in `data/sample_records.json` has these fields:
+
+| Field | Meaning |
+|-------|---------|
+| `id` | Record id, `V01` to `V16` |
+| `variety_name` | Variety name, with the code in brackets where given |
+| `release_year` | Year of release |
+| `institute` | Releasing institute (CSRS Padegaon or RSJRS Kolhapur) |
+| `recommended_seasons` | Any of `adsali`, `preseasonal`, `suru` |
+| `cane_yield_t_ha` | Cane yield in tonnes per hectare, per season |
+| `duration_months` | Crop duration as `[min, max]` months, per season |
+| `key_traits` | Short description of strengths and weaknesses |
+| `state` | State (Maharashtra) |
+| `source_url` | Web link to the MPKV PDF |
+
+Data notes:
+- **V13 (Phule 09057):** the PDF gives no cane yield, so `cane_yield_t_ha` is empty. The CLI shows "not given in source".
+- **V16 (Phule 13007):** the PDF gives one yield for all seasons, stored under the key `all_seasons`.
+- **V14 and V15:** the PDF lists a crop duration of 12 months, stored as `[12, 12]`.
+
+## Source
+
+Data comes from the MPKV sugarcane varieties document:
+https://mpkv.ac.in/Uploads/Research/09%20-%20Sugarcane_20230830095518.pdf
+
+A copy is kept at `data/source/mpkv_sugarcane_varieties.pdf`.
+
+## Git workflow
+
+Each file is committed on its own with a message starting `D2:`. Check `git status` before committing and make sure `.venv` never shows up as staged.
+
+## Next steps
+> TODO: add what Day 3 will cover.
