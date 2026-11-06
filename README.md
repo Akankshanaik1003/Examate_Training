@@ -1,20 +1,30 @@
-# CaneMitra (Project SJ-01, Agriculture)
+# CaneMitra
 
-## Project Card
+**Domain:** Agriculture (Sugarcane, Maharashtra)
+**Student:** Akanksha Kishor Naik | 2124UCEF2049 | CSE | Team SJ-01
 
-- **Product:** CaneMitra. It answers sugarcane questions for Maharashtra farmers using MPKV Rahuri, Directorate of Sugarcane Development (DSD) and TNAU guides, and works out the harvest window for your planting date.
-- **User:** A sugarcane farmer with 4 acres of medium-deep black soil near Kopargaon, deciding whether to plant Phule 265 as preseasonal or suru cane this October.
-- **Problem:** The farmer has to choose a planting season (preseasonal vs suru) without quick, trustworthy guidance, and the choice decides the harvest window, the yield and the factory cutting schedule.
-- **Data source:** PDF guides from MPKV Rahuri and DSD, plus HTML pages from TNAU Agritech.
+## Product
+CaneMitra answers sugarcane questions for Maharashtra farmers using MPKV Rahuri, the Directorate of Sugarcane Development (DSD) and TNAU guides, and works out the harvest window for your planting date.
 
-## Files
+## User
+A sugarcane farmer with 4 acres of medium-deep black soil near Kopargaon.
 
-- `day01_intro.py`: prints the project card with variables and f-strings, then asks the user's name and question with `input()`.
-- `day01_menu.py`: while-loop menu (about CaneMitra, sample questions, planting-season rule check, exit).
+## Problem
+The farmer is deciding whether to plant Phule 265 as preseasonal or suru cane this October. The right answer changes with the season (adsali, preseasonal, suru) and the state, and units vary (kg/ha vs kg/acre, t/ha), so generic or other-state advice can mislead.
 
-## Run
+## Data source
+- MPKV Rahuri: Sugarcane PDF, "Improved / Hybrid Varieties of Sugarcane" (PDF)
+- DSD: Maharashtra-recommended varieties, "Varieties.pdf" (PDF)
+- TNAU Agritech: sugarcane crop page (HTML)
 
+## Day-wise build
+| Day | Task | Files |
+|-----|------|-------|
+| D1 | Project card, intro script, menu loop | README.md, day01_intro.py, day01_menu.py |
+
+## How to run
 ```
 python day01_intro.py
 python day01_menu.py
 ```
+https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html
