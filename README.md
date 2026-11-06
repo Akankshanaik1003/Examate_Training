@@ -115,7 +115,3 @@ https://mpkv.ac.in/Uploads/Research/09%20-%20Sugarcane_20230830095518.pdf
 
 A copy is kept at `data/source/mpkv_sugarcane_varieties.pdf`.
 
-## Git workflow
-
-Each file is committed on its own with a message starting `D2:`. Check `git status` before committing and make sure `.venv` never shows up as staged.
-
