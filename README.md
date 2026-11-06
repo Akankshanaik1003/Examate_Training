@@ -7,6 +7,23 @@ A small Python project for working with sugarcane variety records from Maharasht
 ## Progress log
 
 ### Day 1 - Project setup
+## Project Card
+
+- **Product:** CaneMitra, a simple sugarcane farming assistant (Mitra = friend) that answers common crop questions.
+- **User:** Sugarcane farmers in Maharashtra, and students or advisors who support them.
+- **Problem:** Farmers often lack quick, reliable guidance on irrigation, fertilizer timing, pests and harvest readiness, which leads to lower yield and wasted inputs.
+- **Data source:** Sugarcane crop guides from agricultural universities and the state agriculture department, plus sugar factory harvest schedules (to be added in later days).
+
+## Files
+
+- `day01_intro.py`: prints the project card using variables and f-strings, then asks the user's name and question with `input()`.
+- `day01_menu.py`: while-loop menu (about CaneMitra, sample questions, harvest-readiness rule check, exit).
+
+## Run
+
+```
+python day01_intro.py
+python day01_menu.py
 
 ### Day 2 - Records, data access and CLI
 - Hand-entered **16 sugarcane varieties** into `data/sample_records.json`, each checked against the MPKV PDF.
