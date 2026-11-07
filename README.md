@@ -160,12 +160,25 @@ Data notes:
 | TNAU Agritech sugarcane page: https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html | 42 cleaned records | `data/raw/tnau_sugarcane.html` |
 | Third source: (add the name and URL you used in `app/fetch.py`) | Extra reference document | `data/raw/` |
 
-## Git workflow
+### Day 4 - API, analysis and smart search
+- **S1:** `app/main.py` is a FastAPI service with `GET /health`, `GET /records?limit=`, `GET /records/{id}` (404 if missing), `GET /search?q=` and `POST /questions`.
+- **S2:** `analysis/explore.py` prints 3 facts about the records using pandas. `app/smart_search.py` ranks records with TF-IDF and cosine similarity (scikit-learn) and powers `/search` and `/questions`.
+- `app/records.py` gained `load_all_records()`, which combines the MPKV and TNAU records (58 in total).
+- Tagged the repo `week-1`.
 
-Each file is committed on its own with a message starting `D2:` or `D3:`. Check `git status` before committing and make sure `.venv` never shows up as staged.
+## How to run the API
 
-## Next steps
+pip install -r requirements.txt
+uvicorn app.main:app --reload
 
-- Build on the Day 1 harvest-window goal by estimating a harvest window from the planting date, season and variety duration.
-- Add tests for the record-loading, search and counting functions.
-- Verify season rules and recommendations against the source guides before presenting them as farmer guidance.
+Open http://127.0.0.1:8000/docs to try every endpoint in the browser.
+
+| Endpoint | What it does |
+|----------|--------------|
+| `GET /health` | Returns status and record count |
+| `GET /records?limit=5` | First 5 records (default 10) |
+| `GET /records/V10` | One record, or 404 if the id does not exist |
+| `GET /search?q=drought jaggery` | Best matching records with a similarity score |
+| `POST /questions` | Body `{"question": "..."}`; returns the closest variety, its traits and source |
+
+python -m analysis.explore
