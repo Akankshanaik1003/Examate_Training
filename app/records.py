@@ -40,3 +40,13 @@ def get_by_id(records, record_id):
         if r["id"].lower() == record_id.strip().lower():
             return r
     return None
+
+RECORDS_PATH = Path(__file__).resolve().parent.parent / "data" / "records.json"
+
+
+def load_all_records():
+    """Hand-entered MPKV records (V01-V16) plus the cleaned TNAU records (T01-T42), if present."""
+    records = load_records()
+    if RECORDS_PATH.exists():
+        records += load_records(RECORDS_PATH)
+    return records
