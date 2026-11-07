@@ -1,29 +1,23 @@
 # CaneMitra
 
-A small Python project for working with sugarcane variety records from Maharashtra. The records are hand-entered from the MPKV (Mahatma Phule Krishi Vidyapeeth) sugarcane varieties PDF and can be searched and counted from the command line.
+A small Python project for working with sugarcane variety records. The Maharashtra records are hand-entered from the MPKV (Mahatma Phule Krishi Vidyapeeth) sugarcane varieties PDF; a second set is cleaned automatically from the TNAU (Tamil Nadu Agricultural University) crop guide. Records can be searched and counted from the command line.
 
-**Status:** Day 2 of the build is complete.
+**Status:** Day 3 of the build is complete.
 
 ## Progress log
 
 ### Day 1 - Project setup
-## Project Card
+**Project card**
 
 - **Product:** CaneMitra, a simple sugarcane farming assistant (Mitra = friend) that answers common crop questions.
 - **User:** Sugarcane farmers in Maharashtra, and students or advisors who support them.
 - **Problem:** Farmers often lack quick, reliable guidance on irrigation, fertilizer timing, pests and harvest readiness, which leads to lower yield and wasted inputs.
 - **Data source:** Sugarcane crop guides from agricultural universities and the state agriculture department, plus sugar factory harvest schedules (to be added in later days).
 
-## Files
+**Files**
 
 - `day01_intro.py`: prints the project card using variables and f-strings, then asks the user's name and question with `input()`.
 - `day01_menu.py`: while-loop menu (about CaneMitra, sample questions, harvest-readiness rule check, exit).
-
-## Run
-
-```
-python day01_intro.py
-python day01_menu.py
 
 ### Day 2 - Records, data access and CLI
 - Hand-entered **16 sugarcane varieties** into `data/sample_records.json`, each checked against the MPKV PDF.
@@ -32,6 +26,13 @@ python day01_menu.py
 - Added a virtual environment, `requirements.txt` and `.gitignore`.
 - Added the original MPKV PDF to the repo as the source for the data.
 
+### Day 3 - Fetching and ingesting real data
+- **S2:** `app/models.py` defines a `Record` dataclass (`id`, `variety_name`, `release_year`, `recommended_seasons`, `cane_yield_t_ha`, `key_traits`, `source_url`).
+- **S2:** `app/fetch.py` downloads 3 source documents into `data/raw/` with `requests`, using a 20 second timeout and handling timeouts, HTTP errors and connection errors. A failed download is reported and does not stop the others.
+- **S1:** `app/ingest.py` reads the raw TNAU page, picks out the variety, performance and season tables, cleans the values, skips bad rows with `try/except`, and saves `data/records.json` (42 records).
+- Added `requests` and `beautifulsoup4` to `requirements.txt`.
+- Missing values are stored as `null` or empty, never invented.
+
 ## Project structure
 
 ```
@@ -39,13 +40,20 @@ python day01_menu.py
 ├── README.md
 ├── .gitignore
 ├── requirements.txt
-├── day02_s1.py              # S1: standalone script
+├── day01_intro.py           # Day 1: project introduction and user question
+├── day01_menu.py            # Day 1: sample questions and season menu
+├── day02_s1.py              # Day 2 S1: standalone script
 ├── app/
 │   ├── __init__.py          # empty, marks app as a package
+│   ├── models.py            # Day 3: Record dataclass
+│   ├── fetch.py             # Day 3: download sources into data/raw/
+│   ├── ingest.py            # Day 3: clean raw data into data/records.json
 │   ├── records.py           # load_records, search, count_by, get_by_id
 │   └── cli.py               # command-line menu
 └── data/
-    ├── sample_records.json  # 16 variety records
+    ├── raw/                 # Day 3: downloaded source files
+    ├── records.json         # Day 3: cleaned TNAU records (output of ingest)
+    ├── sample_records.json  # Day 2: 16 hand-entered MPKV variety records
     └── source/
         └── mpkv_sugarcane_varieties.pdf   # original source document
 ```
@@ -55,15 +63,26 @@ python day01_menu.py
 ```
 python -m venv .venv
 .venv\Scripts\activate
+pip install -r requirements.txt
 ```
 
-Day 2 uses only the Python standard library, so there is nothing to install yet. When later days add packages, install them and run `pip freeze > requirements.txt`.
+Day 3 needs `requests` and `beautifulsoup4`. After adding a package, run `pip freeze > requirements.txt`.
 
 ## How to run
 
-Run both commands from the repo root.
+Run all commands from the repo root.
 
-**S1 script** - prints all records, then asks for a keyword and shows counts:
+**Day 1 project introduction:**
+```
+python day01_intro.py
+```
+
+**Day 1 sample-question and season menu:**
+```
+python day01_menu.py
+```
+
+**Day 2 S1 script** - prints all records, then asks for a keyword and shows counts:
 ```
 python day02_s1.py
 ```
@@ -86,9 +105,17 @@ Menu options:
 
 Example keywords to try: `jaggery`, `saline`, `smut`, `drought`, `adsali`.
 
+**Day 3 - download the sources, then clean them:**
+```
+python -m app.fetch
+python -m app.ingest
+```
+
+`fetch` prints `OK`, `TIMEOUT` or `FAILED` for each document. `ingest` prints how many records it saved and skipped, and writes `data/records.json`.
+
 ## Data format
 
-Each record in `data/sample_records.json` has these fields:
+### `data/sample_records.json` (MPKV, Maharashtra, hand-entered)
 
 | Field | Meaning |
 |-------|---------|
@@ -108,10 +135,37 @@ Data notes:
 - **V16 (Phule 13007):** the PDF gives one yield for all seasons, stored under the key `all_seasons`.
 - **V14 and V15:** the PDF lists a crop duration of 12 months, stored as `[12, 12]`.
 
-## Source
+### `data/records.json` (TNAU, Tamil Nadu, produced by `app.ingest`)
 
-Data comes from the MPKV sugarcane varieties document:
-https://mpkv.ac.in/Uploads/Research/09%20-%20Sugarcane_20230830095518.pdf
+| Field | Meaning |
+|-------|---------|
+| `id` | Record id, `T01` to `T42` |
+| `variety_name` | Variety name as written on the page |
+| `release_year` | Always `null` - the page does not give it |
+| `recommended_seasons` | Any of `early`, `mid`, `late`, `special`; empty if the page does not list the variety in its season table |
+| `cane_yield_t_ha` | `{"all_seasons": value}` in tonnes per hectare |
+| `key_traits` | Duration, CCS % and, where the page gives one, a short performance note |
+| `source_url` | Web link to the TNAU page |
 
-A copy is kept at `data/source/mpkv_sugarcane_varieties.pdf`.
+Data notes:
+- TNAU uses Tamil Nadu seasons (early, mid, late, special), which are not the same as Maharashtra's adsali, preseasonal and suru. The two sets are kept separate and their seasons are not converted.
+- Only some TNAU varieties appear in the page's season table, so many records have no season.
+- The TNAU records are for Tamil Nadu. They are not Maharashtra recommendations.
 
+## Sources
+
+| Source | Used for | Saved as |
+|--------|----------|----------|
+| MPKV sugarcane varieties PDF: https://mpkv.ac.in/Uploads/Research/09%20-%20Sugarcane_20230830095518.pdf | 16 hand-entered Maharashtra records | `data/raw/mpkv_sugarcane.pdf`, `data/source/mpkv_sugarcane_varieties.pdf` |
+| TNAU Agritech sugarcane page: https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html | 42 cleaned records | `data/raw/tnau_sugarcane.html` |
+| Third source: (add the name and URL you used in `app/fetch.py`) | Extra reference document | `data/raw/` |
+
+## Git workflow
+
+Each file is committed on its own with a message starting `D2:` or `D3:`. Check `git status` before committing and make sure `.venv` never shows up as staged.
+
+## Next steps
+
+- Build on the Day 1 harvest-window goal by estimating a harvest window from the planting date, season and variety duration.
+- Add tests for the record-loading, search and counting functions.
+- Verify season rules and recommendations against the source guides before presenting them as farmer guidance.
