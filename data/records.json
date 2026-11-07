@@ -1,0 +1,500 @@
+[
+  {
+    "id": "T01",
+    "variety_name": "COC 671",
+    "release_year": null,
+    "recommended_seasons": [
+      "early"
+    ],
+    "cane_yield_t_ha": {
+      "all_seasons": 123.5
+    },
+    "key_traits": "Duration 10 months; CCS 14.20%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T02",
+    "variety_name": "COC 771",
+    "release_year": null,
+    "recommended_seasons": [
+      "early",
+      "late"
+    ],
+    "cane_yield_t_ha": {
+      "all_seasons": 140.0
+    },
+    "key_traits": "Duration 10 months; CCS 13.10%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T03",
+    "variety_name": "COC 772",
+    "release_year": null,
+    "recommended_seasons": [
+      "early"
+    ],
+    "cane_yield_t_ha": {
+      "all_seasons": 143.3
+    },
+    "key_traits": "Duration 10 months; CCS 14.00%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T04",
+    "variety_name": "COC 773",
+    "release_year": null,
+    "recommended_seasons": [
+      "early"
+    ],
+    "cane_yield_t_ha": {
+      "all_seasons": 97.5
+    },
+    "key_traits": "Duration 10 months; CCS 13.20%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T05",
+    "variety_name": "COC 8001 (C 66191)",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 102.9
+    },
+    "key_traits": "Duration 10 - 11 months; CCS 13.20%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T06",
+    "variety_name": "COC 774",
+    "release_year": null,
+    "recommended_seasons": [
+      "mid"
+    ],
+    "cane_yield_t_ha": {
+      "all_seasons": 159.8
+    },
+    "key_traits": "Duration 11 months; CCS 11.90%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T07",
+    "variety_name": "COC 775",
+    "release_year": null,
+    "recommended_seasons": [
+      "mid"
+    ],
+    "cane_yield_t_ha": {
+      "all_seasons": 122.5
+    },
+    "key_traits": "Duration 11 months; CCS 13.40%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T08",
+    "variety_name": "COC 776",
+    "release_year": null,
+    "recommended_seasons": [
+      "mid"
+    ],
+    "cane_yield_t_ha": {
+      "all_seasons": 112.3
+    },
+    "key_traits": "Duration 11 months; CCS 14.00%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T09",
+    "variety_name": "COC 777",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 171.3
+    },
+    "key_traits": "Duration 12 months; CCS 11.80%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T10",
+    "variety_name": "COC 778",
+    "release_year": null,
+    "recommended_seasons": [
+      "late"
+    ],
+    "cane_yield_t_ha": {
+      "all_seasons": 165.5
+    },
+    "key_traits": "Duration 12 months; CCS 11.00%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T11",
+    "variety_name": "COC 779",
+    "release_year": null,
+    "recommended_seasons": [
+      "late"
+    ],
+    "cane_yield_t_ha": {
+      "all_seasons": 204.6
+    },
+    "key_traits": "Duration 12 months; CCS 11.80%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T12",
+    "variety_name": "CO 419",
+    "release_year": null,
+    "recommended_seasons": [
+      "mid",
+      "late"
+    ],
+    "cane_yield_t_ha": {
+      "all_seasons": 112.5
+    },
+    "key_traits": "Duration 12 months; CCS 10.50%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T13",
+    "variety_name": "CO 6304",
+    "release_year": null,
+    "recommended_seasons": [
+      "late",
+      "mid"
+    ],
+    "cane_yield_t_ha": {
+      "all_seasons": 115.0
+    },
+    "key_traits": "Duration 12 months; CCS 13.50%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T14",
+    "variety_name": "COC 8001",
+    "release_year": null,
+    "recommended_seasons": [
+      "mid",
+      "early"
+    ],
+    "cane_yield_t_ha": {
+      "all_seasons": 102.5
+    },
+    "key_traits": "Duration 10 - 11 months; CCS 13.20%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T15",
+    "variety_name": "COC 85061",
+    "release_year": null,
+    "recommended_seasons": [
+      "early"
+    ],
+    "cane_yield_t_ha": {
+      "all_seasons": 128.5
+    },
+    "key_traits": "Duration 10 - 11 months; CCS 12.90%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T16",
+    "variety_name": "COC 86062",
+    "release_year": null,
+    "recommended_seasons": [
+      "early"
+    ],
+    "cane_yield_t_ha": {
+      "all_seasons": 133.5
+    },
+    "key_traits": "Duration 10 - 11 months; CCS 12.60%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T17",
+    "variety_name": "COSi 86071",
+    "release_year": null,
+    "recommended_seasons": [
+      "early"
+    ],
+    "cane_yield_t_ha": {
+      "all_seasons": 131.7
+    },
+    "key_traits": "Duration 10 - 11 months; CCS 12.20%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T18",
+    "variety_name": "COC 90063",
+    "release_year": null,
+    "recommended_seasons": [
+      "early"
+    ],
+    "cane_yield_t_ha": {
+      "all_seasons": 124.0
+    },
+    "key_traits": "Duration 10 - 11 months; CCS 12.30%; Non lodging, high tillering, high yield and good quality. Drought and alkaline tolerant variety and good ratooner.",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T19",
+    "variety_name": "CO 8021",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 137.7
+    },
+    "key_traits": "Duration 10 - 11 months; CCS 11.00%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T20",
+    "variety_name": "COC 91061",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 131.0
+    },
+    "key_traits": "Duration 10 - 11 months; CCS 11.30%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T21",
+    "variety_name": "COC 92061",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 132.7
+    },
+    "key_traits": "Duration 8 - 11 months; CCS 12.76%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T22",
+    "variety_name": "CO 8362",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 124.3
+    },
+    "key_traits": "Duration 11 - 12 months; CCS 12.40%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T23",
+    "variety_name": "COG 93076",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 132.0
+    },
+    "key_traits": "Duration 11 - 12 months; CCS 13.20%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T24",
+    "variety_name": "CO 8208",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 141.5
+    },
+    "key_traits": "Duration 11 - 13 months; CCS 11.07%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T25",
+    "variety_name": "COG 94077",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 133.2
+    },
+    "key_traits": "Duration 11 months; CCS 13.5%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T26",
+    "variety_name": "COG 95076",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 108.2
+    },
+    "key_traits": "Duration 10 - 11 months; CCS 11.5%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T27",
+    "variety_name": "CO 85019",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 134.5
+    },
+    "key_traits": "Duration 12 months; CCS 12.5%; Drought tolerant variety. Resistant to red rot.",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T28",
+    "variety_name": "COSi 95071",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 152.0
+    },
+    "key_traits": "Duration 10 months; CCS 12.9%; Performs well in December, January and February planting.",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T29",
+    "variety_name": "COSi 96071",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 145.0
+    },
+    "key_traits": "Duration 10 months; CCS 11.9%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T30",
+    "variety_name": "CO 86010",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 146.1
+    },
+    "key_traits": "Duration 10 - 12 months; CCS 10.78%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T31",
+    "variety_name": "COC 98061",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 120.0
+    },
+    "key_traits": "Duration 10 - 11 months; CCS 11.60%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T32",
+    "variety_name": "COSi 98071",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 144.7
+    },
+    "key_traits": "Duration 12 months; CCS 12.3%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T33",
+    "variety_name": "CO 86249",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 128.7
+    },
+    "key_traits": "Duration 10 - 12 months; CCS 11.3%; Red rot resistant, Drought tolerant, high yielding",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T34",
+    "variety_name": "COC 99061",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 130.3
+    },
+    "key_traits": "Duration 10-12 months; CCS 11.9%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T35",
+    "variety_name": "CO 86032",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 110.0
+    },
+    "key_traits": "Duration 10-12 months; CCS 13.0%; Performs well in all soil types and extremely well in garden land condition. Good quality cane with higher yield. Has multi ratooning capacity. Can be grown throughout the year. Gives higher recovery. Self detrashing in nature. Amenable for wide row spacing.",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T36",
+    "variety_name": "COC (SC) 22",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 135.9
+    },
+    "key_traits": "Duration 10-12 months; CCS 12.1%; High yielder and high quality drought tolerant moderately resistant to red rot.",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T37",
+    "variety_name": "CO Si (SC) 6",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 142.0
+    },
+    "key_traits": "Duration 10-11 months; CCS 13.1%; High yielder and high quality. Drought tolerant moderately resistant to red rot.",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T38",
+    "variety_name": "COG (SC) 5",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 115.0
+    },
+    "key_traits": "Duration 11-12 months; CCS 12.7%; High yielder suitable for jaggary making and tannery effluent soils",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T39",
+    "variety_name": "CoC 23",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 133.0
+    },
+    "key_traits": "Duration 10-11 months; CCS 12.95%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T40",
+    "variety_name": "CoC 24",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 133.0
+    },
+    "key_traits": "Duration 10-11 months; CCS 12.82%",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T41",
+    "variety_name": "TNAU SC Si 7",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 156.0
+    },
+    "key_traits": "Duration 10-11 months; CCS 13.4%; High yielder and high quality, drought and saline tolerant and moderately resistant to red rot.",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  },
+  {
+    "id": "T42",
+    "variety_name": "TNAU SC Si 8",
+    "release_year": null,
+    "recommended_seasons": [],
+    "cane_yield_t_ha": {
+      "all_seasons": 146.0
+    },
+    "key_traits": "Duration 11-12 months; CCS 12.9%; High yielder and high quality, Tolerant to drought, water logging conditions and problem soils. moderately resistant to red rot. Suitable for mechanized cultivation.",
+    "source_url": "https://agritech.tnau.ac.in/agriculture/sugarcrops_sugarcane.html"
+  }
+]
