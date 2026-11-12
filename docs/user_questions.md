@@ -19,10 +19,3 @@ Real questions a sugarcane farmer might ask, checked against CaneMitra's data (`
 | 9 | Mi Phule 265 October madhe lavla, todni kadhi karu? | Farmer asking for a harvest date | **Partly** | Duration is in the data (preseasonal 14 to 16 months), so a window can be worked out. A harvest-window feature is not built yet |
 | 10 | Aaj sugarcane cha bhav / FRP kiti aahe? | Farmer checking price | **No** | No price or FRP data. This needs a live government or factory source |
 
-## Notes
-
-- **Q6 is the "data cannot answer" question.** The data has variety traits, not fertilizer doses. A correct CaneMitra should say it does not have this information and point to a proper source, instead of guessing.
-- **Q10 is a second question the data cannot answer.** It needs live data that changes often.
-- **Q8 and Q9 are partly answerable.** They show which feature to build next: planting window and harvest window.
-- **Test in `/docs`:** run Q3 and Q6 on `POST /questions`. Q3 returns a sensible variety. Q6 may still return the "closest" record, because TF-IDF matches words and not meaning, even though the answer is not in the data. This is a known limitation, listed in the README, and it is exactly the hallucination risk described in `how_llms_work.md`.
-- Q1 to Q6 should match the 6 questions on your project card. If your card has different ones, swap them in, but keep Q6 as the one the data cannot answer.
