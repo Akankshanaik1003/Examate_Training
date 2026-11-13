@@ -6,10 +6,12 @@ Docs (auto-generated):   http://127.0.0.1:8000/docs
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel
 
+from app.chat import chat
+from app.llm import LLMError
 from app.records import get_by_id, load_all_records
 from app.smart_search import SmartSearch
 
-app = FastAPI(title="CaneMitra API", version="0.4.0")
+app = FastAPI(title="CaneMitra API", version="0.6.0")
 
 RECORDS = load_all_records()
 SEARCH = SmartSearch(RECORDS)
@@ -17,6 +19,11 @@ SEARCH = SmartSearch(RECORDS)
 
 class Question(BaseModel):
     question: str
+
+
+class ChatRequest(BaseModel):
+    question: str
+    prompt_version: str = "v2"  # "v1" = first prompt, "v2" = grounded prompt (prompts/system.md)
 
 
 @app.get("/health")
@@ -58,3 +65,17 @@ def ask(body: Question):
         "source_url": best["source_url"],
         "matches": matches,
     }
+
+
+@app.post("/chat")
+def chat_endpoint(body: ChatRequest):
+    """Day 6: find the best records, then let the LLM write a grounded answer as JSON."""
+    if not body.question.strip():
+        raise HTTPException(status_code=422, detail="question must not be empty")
+    if body.prompt_version not in ("v1", "v2"):
+        raise HTTPException(status_code=422, detail="prompt_version must be v1 or v2")
+    matches = SEARCH.search(body.question, top_k=3)
+    try:
+        return chat(body.question, matches, version=body.prompt_version)
+    except LLMError as e:
+        raise HTTPException(status_code=503, detail=str(e))
