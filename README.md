@@ -2,7 +2,7 @@
 
 CaneMitra (Mitra = friend) is a sugarcane question-answering project for farmers, students and advisors. It collects sugarcane variety records from agricultural university guides, cleans them into one format, and serves them through a command line and a small web API with keyword and TF-IDF search.
 
-**Status:** Week 1 (Days 1-4) is complete. Tag: `week-1`.
+**Status:** Week 1 (Days 1-4) is complete (tag `week-1`). Day 5 and Day 6 are done.
 
 ## Day-wise progress
 
@@ -14,6 +14,7 @@ Each day has its own folder with a README that explains the task and lists the e
 | Day 2 | [`day02/`](day02/README.md) | 16 hand-entered MPKV records, search/count script, reusable data functions and CLI |
 | Day 3 | [`day03/`](day03/README.md) | `Record` dataclass, downloader with error handling, ingest of the TNAU page into `data/records.json` |
 | Day 4 | [`day04/`](day04/README.md) | FastAPI service, pandas analysis, TF-IDF smart search |
+| Day 6 | [`day06/`](day06/README.md) | LLM provider wrapper, `POST /chat`, prompts, prompt comparison |
 
 ### Day 1 - Project idea and interactive menu
 - Defined the project card: product, user, problem and data source.
@@ -37,12 +38,19 @@ Each day has its own folder with a README that explains the task and lists the e
 - `analysis/explore.py`: 3 facts about the records with pandas.
 - `app/records.py` gained `load_all_records()`, which combines both data files (58 records).
 
+### Day 6 - LLM wrapper, `/chat` and prompts
+- `app/llm.py`: one `generate()` function for Gemini or Groq, with timeout and error handling. Keys come from `.env` (not committed); `.env.example` is committed.
+- `app/chat.py` and `POST /chat`: finds the best records, asks the LLM to answer only from them, returns JSON with `answer`, `confidence`, `follow_up` and `sources`.
+- `prompts/`: system prompt (v1 and v2) and 2 task prompts.
+- `eval/prompt_compare.md`: v1 vs v2 on the 10 user questions.
+
 ## Project structure
 
 ```
 .
 ├── README.md
 ├── .gitignore
+├── .env.example             # key names only; copy to .env
 ├── requirements.txt
 ├── day01/
 │   ├── README.md
@@ -63,7 +71,11 @@ Each day has its own folder with a README that explains the task and lists the e
 │   ├── fetch.py             # download sources into data/raw/
 │   ├── ingest.py            # clean raw data into data/records.json
 │   ├── smart_search.py      # TF-IDF + cosine similarity search
+│   ├── llm.py               # Gemini / Groq wrapper (Day 6)
+│   ├── chat.py              # prompt building and JSON reply parsing (Day 6)
 │   └── main.py              # FastAPI service
+├── prompts/                 # system prompt v1/v2 and 2 task prompts (Day 6)
+├── eval/                    # prompt_compare.py and prompt_compare.md (Day 6)
 ├── analysis/
 │   ├── __init__.py
 │   └── explore.py           # 3 facts with pandas
@@ -120,6 +132,7 @@ Open http://127.0.0.1:8000/docs to try every endpoint in the browser.
 | `GET /records/V10` | One record, or 404 if the id does not exist |
 | `GET /search?q=saline soil` | Best matching records with a similarity score |
 | `POST /questions` | Body `{"question": "..."}`; returns the closest variety, its traits and source |
+| `POST /chat` | Day 6: LLM answer from the best records as JSON (`answer`, `confidence`, `follow_up`, `sources`). Needs a key in `.env` |
 
 Example:
 ```
