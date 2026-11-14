@@ -8,6 +8,7 @@ Keys are read from the environment or from the .env file in the repo root.
 .env is git-ignored; .env.example shows the names that are needed.
 """
 import os
+import time
 from pathlib import Path
 
 import requests
@@ -80,17 +81,33 @@ def _groq(system_prompt: str, user_message: str, json_mode: bool) -> str:
 PROVIDERS = {"gemini": _gemini, "groq": _groq}
 
 
+def _short_reason(e: requests.HTTPError) -> str:
+    """Google/Groq put a readable reason in the JSON body; return it (never the key)."""
+    try:
+        return str(e.response.json()["error"]["message"])[:200]
+    except (ValueError, KeyError, TypeError):
+        return ""
+
+
 def generate(system_prompt: str, user_message: str, provider: str | None = None, json_mode: bool = True) -> str:
-    """Send one system prompt + one user message to the provider and return the reply text."""
+    """Send one system prompt + one user message to the provider and return the reply text.
+
+    Busy-server answers (HTTP 429 and 503) are retried up to 3 times, waiting 2, 4 and 8 seconds.
+    """
     load_env()
     name = (provider or os.environ.get("LLM_PROVIDER", "gemini")).lower()
     if name not in PROVIDERS:
         raise LLMError(f"Unknown provider '{name}'. Use one of: {', '.join(PROVIDERS)}")
-    try:
-        return PROVIDERS[name](system_prompt, user_message, json_mode)
-    except requests.Timeout as e:
-        raise LLMError(f"{name} timed out after {TIMEOUT}s") from e
-    except requests.HTTPError as e:
-        raise LLMError(f"{name} returned HTTP {e.response.status_code}") from e
-    except requests.RequestException as e:
-        raise LLMError(f"{name} request failed: {type(e).__name__}") from e
+    for attempt in range(4):
+        try:
+            return PROVIDERS[name](system_prompt, user_message, json_mode)
+        except requests.Timeout as e:
+            raise LLMError(f"{name} timed out after {TIMEOUT}s") from e
+        except requests.HTTPError as e:
+            status = e.response.status_code
+            if status in (429, 503) and attempt < 3:
+                time.sleep(2 ** (attempt + 1))
+                continue
+            raise LLMError(f"{name} returned HTTP {status}: {_short_reason(e)}") from e
+        except requests.RequestException as e:
+            raise LLMError(f"{name} request failed: {type(e).__name__}") from e
