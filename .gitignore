@@ -6,3 +6,4 @@ venv/
 
 # Secrets and local config
 .env
+eval/.compare_cache.json

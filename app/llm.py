@@ -14,7 +14,8 @@ from pathlib import Path
 import requests
 
 ROOT = Path(__file__).resolve().parent.parent
-TIMEOUT = 30  # seconds
+TIMEOUT = 90  # seconds (Gemini "flash" models can take 30s+ on the free tier)
+RETRY_WAITS = (5, 15, 30)  # seconds to wait before retry 1, 2, 3 on a busy server (429/503) or a timeout
 
 
 class LLMError(Exception):
@@ -22,7 +23,7 @@ class LLMError(Exception):
 
 
 def load_env(path: Path = ROOT / ".env") -> None:
-    """Read KEY=VALUE lines from .env into os.environ (real environment variables win)."""
+    """Read KEY=VALUE lines from .env into os.environ (real environment variables win, unless they are empty)."""
     if not path.exists():
         return
     for line in path.read_text(encoding="utf-8-sig").splitlines():
@@ -30,25 +31,51 @@ def load_env(path: Path = ROOT / ".env") -> None:
         if not line or line.startswith("#") or "=" not in line:
             continue
         key, value = line.split("=", 1)
-        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+        key, value = key.strip(), value.strip().strip('"').strip("'")
+        if not os.environ.get(key):  # not set yet, or set but empty
+            os.environ[key] = value
 
 
 def _key(name: str) -> str:
     load_env()
     value = os.environ.get(name, "")
     if not value or value.startswith("your-"):
-        raise LLMError(f"{name} is not set. Copy .env.example to .env and add your key.")
+        where = ROOT / ".env"
+        raise LLMError(
+            f"{name} is not set. "
+            + ("The file .env exists but has no real value for it" if where.exists() else "There is no .env file")
+            + f" (expected at {where}). Copy .env.example to .env, add the line {name}=your-real-key, "
+            "save it, and run again from the repo root."
+        )
     return value
 
 
+def configured_providers() -> list[str]:
+    """Names of providers that have a real key in .env / the environment (never returns the key itself)."""
+    load_env()
+    names = {"gemini": "GEMINI_API_KEY", "groq": "GROQ_API_KEY"}
+    return [p for p, k in names.items() if os.environ.get(k) and not os.environ[k].startswith("your-")]
+
+
+def check_provider(provider: str) -> tuple[bool, str]:
+    """Make ONE tiny call to see if the key and quota work. Returns (ok, message). Never raises, never prints the key."""
+    try:
+        text = generate("Reply with JSON only.", 'Return {"ok": true}', provider=provider)
+        return True, f"{provider} works (test reply: {text.strip()[:40]})"
+    except LLMError as e:
+        return False, str(e)
+
+
 def _gemini(system_prompt: str, user_message: str, json_mode: bool) -> str:
-    model = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+    model = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
     body = {
         "systemInstruction": {"parts": [{"text": system_prompt}]},
         "contents": [{"role": "user", "parts": [{"text": user_message}]}],
         "generationConfig": {"temperature": 0.2},
     }
+    if "2.5-flash" in model and "lite" not in model:
+        body["generationConfig"]["thinkingConfig"] = {"thinkingBudget": 0}  # no "thinking" = much faster, fewer timeouts
     if json_mode:
         body["generationConfig"]["responseMimeType"] = "application/json"
     r = requests.post(url, json=body, headers={"x-goog-api-key": _key("GEMINI_API_KEY")}, timeout=TIMEOUT)
@@ -92,21 +119,26 @@ def _short_reason(e: requests.HTTPError) -> str:
 def generate(system_prompt: str, user_message: str, provider: str | None = None, json_mode: bool = True) -> str:
     """Send one system prompt + one user message to the provider and return the reply text.
 
-    Busy-server answers (HTTP 429 and 503) are retried up to 3 times, waiting 2, 4 and 8 seconds.
+    Busy-server answers (HTTP 429 and 503) and timeouts are retried up to 3 times,
+    waiting 5, 15 and 30 seconds (free tiers allow only a few requests per minute).
     """
     load_env()
     name = (provider or os.environ.get("LLM_PROVIDER", "gemini")).lower()
     if name not in PROVIDERS:
         raise LLMError(f"Unknown provider '{name}'. Use one of: {', '.join(PROVIDERS)}")
-    for attempt in range(4):
+    for attempt in range(len(RETRY_WAITS) + 1):
+        can_retry = attempt < len(RETRY_WAITS)
         try:
             return PROVIDERS[name](system_prompt, user_message, json_mode)
         except requests.Timeout as e:
-            raise LLMError(f"{name} timed out after {TIMEOUT}s") from e
+            if can_retry:
+                time.sleep(RETRY_WAITS[attempt])
+                continue
+            raise LLMError(f"{name} timed out after {TIMEOUT}s (tried {attempt + 1} times)") from e
         except requests.HTTPError as e:
             status = e.response.status_code
-            if status in (429, 503) and attempt < 3:
-                time.sleep(2 ** (attempt + 1))
+            if status in (429, 503) and can_retry:
+                time.sleep(RETRY_WAITS[attempt])
                 continue
             raise LLMError(f"{name} returned HTTP {status}: {_short_reason(e)}") from e
         except requests.RequestException as e:
