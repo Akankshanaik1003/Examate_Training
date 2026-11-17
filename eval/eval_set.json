@@ -1,0 +1,16 @@
+[
+  {"id": "q01", "type": "answerable", "question": "Which sugarcane varieties are recommended for the adsali season?", "expected_keywords": ["adsali"]},
+  {"id": "q02", "type": "answerable", "question": "Which variety is suitable for saline or alkaline soils?", "expected_keywords": ["saline", "alkaline"]},
+  {"id": "q03", "type": "answerable", "question": "Name a sugarcane variety that tolerates drought.", "expected_keywords": ["drought"]},
+ {"id": "q04", "type": "answerable", "question": "In which seasons is Phule 09057 recommended?", "expected_keywords": ["09057"]},{"id": "q05", "type": "answerable", "question": "What is the duration of Phule 13007 in months?", "expected_keywords": ["13007"]},
+  {"id": "q06", "type": "unanswerable", "question": "What is today's sugarcane price per tonne at the Kolhapur market?", "expected_keywords": []},
+  {"id": "q07", "type": "answerable", "question": "Which varieties are recommended for pre-seasonal planting?", "expected_keywords": ["preseasonal", "pre-seasonal"]},
+  {"id": "q08", "type": "answerable", "question": "What is the CCS percentage of Co 86032?", "expected_keywords": ["86032"]},
+  {"id": "q09", "type": "answerable", "question": "Which institute released the Phule sugarcane varieties?", "expected_keywords": ["MPKV", "Mahatma Phule"]},
+  {"id": "q10", "type": "unanswerable", "question": "Which fertilizer brand is giving the best discount this month?", "expected_keywords": []},
+  {"id": "q11", "type": "answerable", "question": "Which varieties are resistant to red rot?", "expected_keywords": ["red rot"]},
+  {"id": "q12", "type": "answerable", "question": "What yield does Phule 09057 give?", "expected_keywords": ["09057"]},
+  {"id": "q13", "type": "answerable", "question": "Which varieties are suitable for ratoon crops?", "expected_keywords": ["ratoon"]},
+  {"id": "q14", "type": "unanswerable", "question": "How do I grow wheat in Punjab?", "expected_keywords": []},
+  {"id": "q15", "type": "answerable", "question": "Which varieties are suitable for waterlogged or flood-prone fields?", "expected_keywords": ["waterlog", "flood"]}
+]

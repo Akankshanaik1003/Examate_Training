@@ -16,6 +16,7 @@ Each day has its own folder with a README that explains the task and lists the e
 | Day 4 | [`day04/`](day04/README.md) | FastAPI service, pandas analysis, TF-IDF smart search                                              |
 | Day 6 | [`day06/`](day06/README.md) | LLM provider wrapper, `POST /chat`, prompts, prompt comparison                                     |
 | Day 7 | [`day07/`](day07/README.md) | Chunking with source/page/title, embeddings, Chroma vector store, `GET /search/semantic`           |
+| Day 8 | [`day08/`](https://github.com/Akankshanaik1003/Examate_Training/blob/main/day08/README.md) | `app/rag.py`, `POST /ask` with citations and "I don't know", 15-row eval set, 2-config comparison |
 
 ### Day 1 - Project idea and interactive menu
 
@@ -236,3 +237,16 @@ Each file is committed on its own with a message starting with the day, for exam
 - Add tests for the record-loading, search and counting functions.
 - Verify season rules and recommendations against the source guides.
 - Use the semantic chunks as the context for `POST /chat`.
+
+## Day 8 - RAG answers and evaluation
+
+<!-- EVAL:START -->
+Eval set: `eval/eval_set.json` (15 questions: 12 answerable, 3 that must get "I don't know"). Configs: **A** = 120-word chunks, top-3; **B** = 250-word chunks, top-5. Run with `python eval\run_eval.py`.
+
+| Config | Chunk size | Top-k | Chunks | Retrieval hit | Answer correct | Correct "I don't know" | With citations | Overall | Avg sec/question |
+|---|---|---|---|---|---|---|---|---|---|
+| A | 120 words | 3 | 139 | 6/12 (50%) | 4/12 (33%) | 3/3 (100%) | 5/12 (42%) | 7/15 (47%) | 5.35 |
+| **B (winner)** | 250 words | 5 | 64 | 9/12 (75%) | 6/12 (50%) | 3/3 (100%) | 7/12 (58%) | 9/15 (60%) | 14.77 |
+
+**Winner: config B** (250-word chunks, top-5). Per-question results are in `eval/results.md`.
+<!-- EVAL:END -->
