@@ -5,6 +5,8 @@ Docs (auto-generated):   http://127.0.0.1:8000/docs
 """
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel
+  
+from app.vectorstore import get_collection, search as semantic_chunks
 
 from app.chat import chat
 from app.llm import LLMError
@@ -66,6 +68,12 @@ def ask(body: Question):
         "matches": matches,
     }
 
+
+@app.get("/search/semantic")
+def search_semantic(q: str = Query(..., min_length=2), k: int = 3):
+    if get_collection().count() == 0:
+        raise HTTPException(status_code=503, detail="Index is empty. Run: python -m app.vectorstore")
+    return {"query": q, "results": semantic_chunks(q, k)}
 
 @app.post("/chat")
 def chat_endpoint(body: ChatRequest):
