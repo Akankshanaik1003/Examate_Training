@@ -1,22 +1,27 @@
 # CaneMitra
 
-CaneMitra (Mitra = friend) is a sugarcane question-answering project for farmers, students and advisors. It collects sugarcane variety records from agricultural university guides, cleans them into one format, and serves them through a command line and a small web API with keyword, TF-IDF and semantic (embedding) search.
+CaneMitra (Mitra = friend) is a sugarcane question-answering project for farmers, students and advisors. It collects sugarcane variety records from agricultural university guides, cleans them into one format, and serves them through a command line, a web API (keyword, TF-IDF search and LLM answers) and a Streamlit chat with a season timeline.
 
-**Status:** Week 1 (Days 1-4) is complete (tag `week-1`). Days 5, 6 and 7 are done.
+**Status:** Week 1 (Days 1-4) is complete (tag `week-1`). Days 5-10 are done. Checkpoint 2 is at Day 10 (tag `checkpoint-2`).
+
+![CaneMitra UI](docs/day10_ui.png)
 
 ## Day-wise progress
 
-Each day has its own folder with a README that explains the task and lists the exact path of every file. Code used by several days lives in the shared `app/`, `analysis/`, `eval/` and `data/` folders.
+Each day has its own folder with a README that explains the task and lists the exact path of every file. Code used by several days lives in the shared `app/`, `analysis/`, `data/` and `ui/` folders.
 
-| Day   | Folder                    | What was built                                                                                       |
-| ----- | ------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Day 1 | [`day01/`](day01/README.md) | Project card, intro script and interactive menu                                                    |
-| Day 2 | [`day02/`](day02/README.md) | 16 hand-entered MPKV records, search/count script, reusable data functions and CLI                 |
-| Day 3 | [`day03/`](day03/README.md) | `Record` dataclass, downloader with error handling, ingest of the TNAU page into `data/records.json` |
-| Day 4 | [`day04/`](day04/README.md) | FastAPI service, pandas analysis, TF-IDF smart search                                              |
-| Day 6 | [`day06/`](day06/README.md) | LLM provider wrapper, `POST /chat`, prompts, prompt comparison                                     |
-| Day 7 | [`day07/`](day07/README.md) | Chunking with source/page/title, embeddings, Chroma vector store, `GET /search/semantic`           |
-| Day 8 | [`day08/`](https://github.com/Akankshanaik1003/Examate_Training/blob/main/day08/README.md) | `app/rag.py`, `POST /ask` with citations and "I don't know", 15-row eval set, 2-config comparison |
+| Day    | Folder                                                                                       | What was built                                                                                       |
+| ------ | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Day 1  | [`day01/`](https://github.com/Akankshanaik1003/Examate_Training/blob/main/day01/README.md)   | Project card, intro script and interactive menu                                                      |
+| Day 2  | [`day02/`](https://github.com/Akankshanaik1003/Examate_Training/blob/main/day02/README.md)   | 16 hand-entered MPKV records, search/count script, reusable data functions and CLI                   |
+| Day 3  | [`day03/`](https://github.com/Akankshanaik1003/Examate_Training/blob/main/day03/README.md)   | `Record` dataclass, downloader with error handling, ingest of the TNAU page into `data/records.json` |
+| Day 4  | [`day04/`](https://github.com/Akankshanaik1003/Examate_Training/blob/main/day04/README.md)   | FastAPI service, pandas analysis, TF-IDF smart search                                                |
+| Day 5  | [`day05/`](https://github.com/Akankshanaik1003/Examate_Training/blob/main/day05/README.md)   | See `day05/README.md`                                                                                |
+| Day 6  | [`day06/`](https://github.com/Akankshanaik1003/Examate_Training/blob/main/day06/README.md)   | LLM provider wrapper, `POST /chat`, prompts, prompt comparison                                       |
+| Day 7  | [`day07/`](https://github.com/Akankshanaik1003/Examate_Training/blob/main/day07/README.md)   | TODO: one line from your `day07/README.md`                                                           |
+| Day 8  | [`day08/`](https://github.com/Akankshanaik1003/Examate_Training/blob/main/day08/README.md)   | TODO: one line from your `day08/README.md`                                                           |
+| Day 9  | [`day09/`](https://github.com/Akankshanaik1003/Examate_Training/blob/main/day09/README.md)   | TODO: one line from your `day09/README.md`                                                           |
+| Day 10 | [`day10/`](https://github.com/Akankshanaik1003/Examate_Training/blob/main/day10/README.md)   | Streamlit chat UI: calls `/ask` or `/agent`, citations, thumbs up/down, season timeline bar          |
 
 ### Day 1 - Project idea and interactive menu
 
@@ -44,6 +49,10 @@ Each day has its own folder with a README that explains the task and lists the e
 - `analysis/explore.py`: 3 facts about the records with pandas.
 - `app/records.py` gained `load_all_records()`, which combines both data files (58 records).
 
+### Day 5
+
+- TODO: summarise `day05/README.md` in 2-3 bullets.
+
 ### Day 6 - LLM wrapper, `/chat` and prompts
 
 - `app/llm.py`: one `generate()` function for Gemini or Groq, with timeout and error handling. Keys come from `.env` (not committed); `.env.example` is committed.
@@ -51,13 +60,17 @@ Each day has its own folder with a README that explains the task and lists the e
 - `prompts/`: system prompt (v1 and v2) and 2 task prompts.
 - `eval/prompt_compare.md`: v1 vs v2 on the 10 user questions.
 
-### Day 7 - Chunking, embeddings and semantic search
+### Days 7-9
 
-- `app/chunking.py`: splits the documents in `data/raw/` into 150 word chunks (30 word overlap), each keeping `source`, `page` and `title`. Output: `data/chunks.json`.
-- `app/embed.py`: local `all-MiniLM-L6-v2` embeddings and an in-memory semantic search.
-- `app/vectorstore.py`: indexes all chunks into a persistent Chroma collection (`data/chroma/`) and searches it.
-- `GET /search/semantic?q=`: returns the closest chunks with source, page, title and score.
-- `eval/search_results.md`: hits for the 10 user questions, produced by `eval/semantic_eval.py`.
+- TODO: 2-3 bullets per day from your `day07/`, `day08/` and `day09/` READMEs. Name the new endpoints (`/ask`, `/agent`) and the files behind them.
+
+### Day 10 - Streamlit UI and season timeline (Checkpoint 2)
+
+- `ui/app.py`: Streamlit chat that calls `/ask` or `/agent` (chosen in the sidebar), shows the answer, confidence and **citations**, and has 👍 / 👎 buttons.
+- `ui/feedback.py`: saves every thumbs click as one JSON line in `data/feedback.jsonl`.
+- `ui/timeline.py`: the **season timeline bar**. Pick adsali, preseasonal or suru and a planting date; it draws planting, fertiliser split dates and the harvest window month by month.
+- Friendly errors when the API is down or slow.
+- Screenshot: `docs/day10_ui.png`. Tag: `checkpoint-2`.
 
 ## Project structure
 
@@ -67,20 +80,8 @@ Each day has its own folder with a README that explains the task and lists the e
 ├── .gitignore
 ├── .env.example             # key names only; copy to .env
 ├── requirements.txt
-├── day01/
-│   ├── README.md
-│   ├── day01_intro.py       # project card and user question
-│   └── day01_menu.py        # sample questions and season menu
-├── day02/
-│   ├── README.md
-│   └── day02_s1.py          # print, search and count script
-├── day03/
-│   └── README.md            # points to app/models.py, fetch.py, ingest.py
-├── day04/
-│   └── README.md            # points to app/main.py, smart_search.py, analysis/explore.py
-├── day07/
-│   └── README.md            # points to app/chunking.py, embed.py, vectorstore.py
-├── app/                     # shared package (Days 2-7)
+├── day01/ ... day10/        # one README per day (day01 and day02 also hold scripts)
+├── app/                     # shared package (Days 2-9)
 │   ├── __init__.py
 │   ├── records.py           # load_records, load_all_records, search, count_by, get_by_id
 │   ├── cli.py               # command-line menu
@@ -90,20 +91,23 @@ Each day has its own folder with a README that explains the task and lists the e
 │   ├── smart_search.py      # TF-IDF + cosine similarity search
 │   ├── llm.py               # Gemini / Groq wrapper (Day 6)
 │   ├── chat.py              # prompt building and JSON reply parsing (Day 6)
-│   ├── chunking.py          # split raw documents into chunks (Day 7)
-│   ├── embed.py             # sentence-transformers embeddings (Day 7)
-│   ├── vectorstore.py       # persistent Chroma index and search (Day 7)
-│   └── main.py              # FastAPI service
+│   └── main.py              # FastAPI service (+ /ask and /agent from Days 7-9)
+├── ui/                      # Streamlit front end (Day 10)
+│   ├── __init__.py
+│   ├── app.py               # chat, citations, thumbs, timeline chart
+│   ├── timeline.py          # planting, fertiliser splits, harvest window
+│   └── feedback.py          # saves thumbs to data/feedback.jsonl
 ├── prompts/                 # system prompt v1/v2 and 2 task prompts (Day 6)
-├── eval/                    # prompt_compare (Day 6); questions.txt, semantic_eval.py, search_results.md (Day 7)
+├── eval/                    # prompt_compare.py and prompt_compare.md (Day 6)
 ├── analysis/
 │   ├── __init__.py
 │   └── explore.py           # 3 facts with pandas
+├── docs/
+│   └── day10_ui.png         # screenshot of the UI
 └── data/
     ├── sample_records.json  # 16 hand-entered MPKV records
     ├── records.json         # 42 cleaned TNAU records (output of ingest)
-    ├── chunks.json          # chunks with source, page, title (output of chunking, Day 7)
-    ├── chroma/              # persistent Chroma index (not committed, Day 7)
+    ├── feedback.jsonl       # thumbs up/down log (created by the UI, not committed)
     ├── raw/                 # downloaded source files
     └── source/
         └── mpkv_sugarcane_varieties.pdf
@@ -117,7 +121,7 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Run every command from the repository root. The first run of `app/embed.py` downloads the embedding model (about 90 MB), so internet is needed once.
+`requirements.txt` includes `streamlit` (Day 10). Run every command from the repository root.
 
 ## How to run
 
@@ -152,15 +156,16 @@ uvicorn app.main:app --reload
 
 Open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) to try every endpoint in the browser.
 
-| Endpoint                            | What it does                                                                                                            |
-| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `GET /health`                       | Status and number of records (58)                                                                                       |
-| `GET /records?limit=5`              | First 5 records (default 10)                                                                                            |
-| `GET /records/V10`                  | One record, or 404 if the id does not exist                                                                             |
-| `GET /search?q=saline soil`         | Best matching records with a similarity score                                                                           |
-| `POST /questions`                   | Body `{"question": "..."}`; returns the closest variety, its traits and source                                          |
-| `POST /chat`                        | Day 6: LLM answer from the best records as JSON (`answer`, `confidence`, `follow_up`, `sources`). Needs a key in `.env` |
-| `GET /search/semantic?q=saline soil` | Day 7: closest document chunks by meaning, with `source`, `page`, `title` and `score`. Run `python -m app.vectorstore` first |
+| Endpoint                    | What it does                                                                                                            |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `GET /health`               | Status and number of records (58)                                                                                       |
+| `GET /records?limit=5`      | First 5 records (default 10)                                                                                            |
+| `GET /records/V10`          | One record, or 404 if the id does not exist                                                                             |
+| `GET /search?q=saline soil` | Best matching records with a similarity score                                                                           |
+| `POST /questions`           | Body `{"question": "..."}`; returns the closest variety, its traits and source                                          |
+| `POST /chat`                | Day 6: LLM answer from the best records as JSON (`answer`, `confidence`, `follow_up`, `sources`). Needs a key in `.env` |
+| `POST /ask`                 | TODO (Days 7-9): one line on what it returns                                                                            |
+| `POST /agent`               | TODO (Days 7-9): one line on what it returns                                                                            |
 
 Example:
 
@@ -176,18 +181,17 @@ python -m analysis.explore
 
 It prints the top 3 cane yields, the average Maharashtra yield per season, and how many varieties mention drought tolerance.
 
-**Day 7** - build the chunks and the index, then run the evaluation:
+**Day 10** - the chat UI. Start the API in one terminal, the UI in a second:
 
 ```
-python -m app.chunking
-python -m app.vectorstore
-python -m eval.semantic_eval
+uvicorn app.main:app --reload
+streamlit run ui/app.py
 ```
 
-Start the API (`uvicorn app.main:app --reload`) and try:
+Open [http://localhost:8501](http://localhost:8501). In the sidebar choose `ask` or `agent`, a season and a planting date. Check the timeline logic alone with:
 
 ```
-curl "http://127.0.0.1:8000/search/semantic?q=saline soil&k=3"
+python -m ui.timeline
 ```
 
 ## Data
@@ -201,8 +205,6 @@ Fields of `sample_records.json`: `id`, `variety_name`, `release_year`, `institut
 
 Fields of `records.json`: `id`, `variety_name`, `release_year` (always `null`), `recommended_seasons`, `cane_yield_t_ha` (`{"all_seasons": value}`), `key_traits` (duration, CCS %, and a short note where the page has one), `source_url`.
 
-Fields of `chunks.json` (Day 7): `id`, `text`, `source` (file name), `page`, `title`.
-
 Data notes:
 
 - **V13 (Phule 09057):** the PDF gives no cane yield, so `cane_yield_t_ha` is empty.
@@ -210,7 +212,7 @@ Data notes:
 - **V14 and V15:** the PDF lists a duration of 12 months, stored as `[12, 12]`.
 - **TNAU records:** the page gives no release year, so it is `null`; no value was invented. TNAU seasons are Tamil Nadu seasons and are not converted to Maharashtra's. Only some varieties appear in the page's season table, so many records have no season.
 - The TNAU records are for Tamil Nadu and are not Maharashtra recommendations. Every record keeps its `source_url`.
-- **Chunks:** the TNAU HTML page has no pages, so its chunks always have `page` 1.
+- **Feedback:** `data/feedback.jsonl` holds one JSON object per thumbs click (`time`, `rating`, `endpoint`, `question`, `answer`, `sources`).
 
 ## Sources
 
@@ -222,31 +224,18 @@ Data notes:
 
 ## Limitations
 
-- `/search` uses TF-IDF, which matches words and not meaning. Short keyword queries such as `saline soil` work best.
-- `/search/semantic` matches meaning but returns raw source chunks, uses an English-only model, and its chunk size (150 words) is not tuned.
+- Search uses TF-IDF, which matches words and not meaning. Short keyword queries such as `saline soil` work best.
 - `POST /questions` returns the best matching records. It does not generate a written answer.
 - Season rules and recommendations have not yet been verified against the full source guides and should not be presented as farmer guidance.
+- **Season timeline (Day 10):** the crop durations (adsali 18, preseasonal 15, suru 12 months), the fertiliser split days (0/45/90, plus 135 for adsali and preseasonal) and the 30-day harvest window are placeholder assumptions in `ui/timeline.py`. They are not yet verified against the MPKV guide.
+- Thumbs feedback is only logged to a local file. Nothing uses it yet to improve answers.
 
 ## Git workflow
 
-Each file is committed on its own with a message starting with the day, for example `D3:` or `D7:`. Check `git status` before committing and make sure `.venv` and `data/chroma/` never show up as staged. The `week-1` tag marks the end of Days 1-4.
+Each file is committed on its own with a message starting with the day, for example `D3:` or `D10:`. Check `git status` before committing and make sure `.venv` never shows up as staged. The `week-1` tag marks the end of Days 1-4. The `checkpoint-2` tag marks Day 10 (`git tag checkpoint-2` then `git push origin checkpoint-2`).
 
 ## Next steps
 
-- Estimate a harvest window from the planting date, season and variety duration.
-- Add tests for the record-loading, search and counting functions.
-- Verify season rules and recommendations against the source guides.
-- Use the semantic chunks as the context for `POST /chat`.
-
-## Day 8 - RAG answers and evaluation
-
-<!-- EVAL:START -->
-Eval set: `eval/eval_set.json` (15 questions: 12 answerable, 3 that must get "I don't know"). Configs: **A** = 120-word chunks, top-3; **B** = 250-word chunks, top-5. Run with `python eval\run_eval.py`.
-
-| Config | Chunk size | Top-k | Chunks | Retrieval hit | Answer correct | Correct "I don't know" | With citations | Overall | Avg sec/question |
-|---|---|---|---|---|---|---|---|---|---|
-| A | 120 words | 3 | 139 | 6/12 (50%) | 4/12 (33%) | 3/3 (100%) | 5/12 (42%) | 7/15 (47%) | 5.35 |
-| **B (winner)** | 250 words | 5 | 64 | 9/12 (75%) | 6/12 (50%) | 3/3 (100%) | 7/12 (58%) | 9/15 (60%) | 14.77 |
-
-**Winner: config B** (250-word chunks, top-5). Per-question results are in `eval/results.md`.
-<!-- EVAL:END -->
+- Verify the timeline numbers and season rules against the MPKV guide, then read `duration_months` from the matching variety record.
+- Use the saved thumbs feedback to find weak answers and improve prompts.
+- Add tests for the record-loading, search and timeline functions.
