@@ -10,11 +10,12 @@ from app.vectorstore import get_collection, search as semantic_chunks
 
 from app.chat import chat
 from app.llm import LLMError
+from app.graph import ask as agent_ask, build_graph, resume as agent_resume
 from app.rag import answer_question
 from app.records import get_by_id, load_all_records
 from app.smart_search import SmartSearch
 
-app = FastAPI(title="CaneMitra API", version="0.8.0")
+app = FastAPI(title="CaneMitra API", version="0.9.0")
 
 RECORDS = load_all_records()
 SEARCH = SmartSearch(RECORDS)
@@ -106,5 +107,44 @@ def ask_rag(body: AskRequest):
         raise HTTPException(status_code=503, detail="Index is empty. Run: python -m app.vectorstore")
     try:
         return answer_question(body.question, top_k=body.top_k)
+    except LLMError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+
+
+class AgentRequest(BaseModel):
+    question: str = ""             # a new question (leave empty when you are only answering an approval)
+    thread_id: str | None = None   # same id = same conversation (memory); omit to start a new one
+    approve: bool | None = None    # true/false answers a pending approval
+
+
+_AGENT_GRAPH = None
+
+
+def get_agent_graph():
+    """Build the LangGraph agent once and reuse it, so its memory survives between requests."""
+    global _AGENT_GRAPH
+    if _AGENT_GRAPH is None:
+        _AGENT_GRAPH = build_graph()
+    return _AGENT_GRAPH
+
+
+@app.post("/agent")
+def agent_endpoint(body: AgentRequest):
+    """Day 9: agent with tools (RAG search + harvest window), memory per thread_id and an approval step.
+
+    1. {"question": "..."}                      -> status "done", or "awaiting_approval" with the pending tool call
+    2. {"thread_id": "...", "approve": true}    -> continues; false cancels that tool call
+    """
+    graph = get_agent_graph()
+    try:
+        if body.approve is not None:
+            if not body.thread_id:
+                raise HTTPException(status_code=422, detail="thread_id is required to answer an approval")
+            return agent_resume(graph, body.thread_id, body.approve)
+        if not body.question.strip():
+            raise HTTPException(status_code=422, detail="question must not be empty")
+        return agent_ask(graph, body.question, body.thread_id)
+    except ValueError as e:
+        raise HTTPException(status_code=409, detail=str(e))
     except LLMError as e:
         raise HTTPException(status_code=503, detail=str(e))
