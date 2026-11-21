@@ -1,0 +1,22 @@
+# Keep the build context small: the first build sent 1.75 GB because of big folders like these.
+.venv
+venv
+.git
+**/__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+.vscode
+
+# Secrets: docker-compose.yml passes .env in at run time, it is never baked into the image
+.env
+
+# Data: ./data is mounted into the container by docker-compose.yml
+data/chroma
+data/raw
+data/feedback.jsonl
+
+# Not needed inside the container
+docs
+eval
+day*

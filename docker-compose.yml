@@ -1,0 +1,37 @@
+# Start everything with:  docker compose up --build
+services:
+  api:
+    build: .
+    image: canemitra:latest          # the UI service reuses this image, so it is built only once
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    env_file:
+      - path: .env
+        required: false              # Gemini/Groq keys come from your local .env
+    volumes:
+      - ./data:/app/data             # records, chunks.json and the Chroma index (data/chroma) from your PC
+      - hf_cache:/hf_cache           # the embedding model is downloaded once and kept here
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 90s              # importing torch / chromadb / langgraph takes a while
+
+  ui:
+    image: canemitra:latest
+    pull_policy: never               # use the image built by the api service
+    command: streamlit run ui/app.py --server.address 0.0.0.0 --server.port 8501 --server.headless true
+    ports:
+      - "8501:8501"
+    environment:
+      CANEMITRA_API_URL: http://api:8000
+    volumes:
+      - ./data:/app/data             # thumbs feedback is saved to data/feedback.jsonl on your PC
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  hf_cache:
