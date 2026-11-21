@@ -6,37 +6,38 @@
 
 ## Files
 
-| Path                    | What it does                                                                                              |
-| ----------------------- | --------------------------------------------------------------------------------------------------------- |
-| `tests/__init__.py`     | Empty file                                                                                                |
-| `tests/conftest.py`     | Test helpers: API client, fake LLM, fake Chroma index, fake agent graph (no key, no network, no model)    |
-| `tests/test_records.py` | `load_records`, `load_all_records`, `get_by_id`, `search`, `count_by`, `SmartSearch`                       |
-| `tests/test_tools.py`   | Agent tool `cane_harvest_window`, `add_months`, `run_tool`                                                |
-| `tests/test_api.py`     | `/health`, `/records`, `/search`, `/questions`, `/ask` (fake LLM + index), `/agent` (approval flow)       |
-| `pytest.ini`            | pytest settings                                                                                           |
-| `ruff.toml`             | Lint settings                                                                                             |
-| `Dockerfile`            | One image for the API and the UI (CPU-only PyTorch)                                                       |
-| `.dockerignore`         | Keeps `.venv`, `.git`, `.env`, `data/chroma` and caches out of the build                                  |
-| `docker-compose.yml`    | Starts `api` (port 8000) and `ui` (port 8501)                                                             |
+| Path                    | What it does                                                                                       |
+| ----------------------- | -------------------------------------------------------------------------------------------------- |
+| `tests/conftest.py`     | Shared `client` fixture (FastAPI `TestClient`)                                                     |
+| `tests/test_records.py` | `load_records`, `load_all_records`, `get_by_id` (found and missing)                                |
+| `tests/test_search.py`  | Smart search: results, scores, `top_k`, empty query                                                |
+| `tests/test_api.py`     | `/health`, `/records?limit=`, `/records/{id}`, 404, `/search`                                      |
+| `tests/test_chat.py`    | `/ask` with a fake RAG function and a fake Chroma collection; empty question is rejected (422)     |
+| `tests/test_agent.py`   | Agent loop with a fake LLM: `parse_action`, `format_steps`, tool call then answer, max steps       |
+| `pyproject.toml`        | Settings for ruff (`ruff check .`) and pytest (`tests/` folder, repo root on the path)             |
+| `requirements-dev.txt`  | `pytest`, `httpx` and `ruff` on top of `requirements.txt`                                          |
+| `Dockerfile`            | One image for the API and the UI (CPU-only PyTorch)                                                |
+| `.dockerignore`         | Keeps `.venv`, `.git`, `.env`, `data/chroma` and caches out of the build                           |
+| `docker-compose.yml`    | Starts `api` (port 8000) and `ui` (port 8501)                                                      |
 
 ## Tests
 
 ```
+pip install -r requirements-dev.txt
 python -m pytest -v
 ```
 
-42 tests. They never call Gemini or Groq and never download the embedding model: `conftest.py` replaces `app.rag.generate`, the Chroma lookup and the agent's LLM with fakes. Several tests check the fake was (or was not) called, for example a low-score question must say "I don't know" without calling the LLM, and an invented citation must be rejected.
+23 tests. They never call Gemini or Groq and never download the embedding model: the LLM and the RAG function are replaced with fakes using `monkeypatch`.
 
 ## Lint
 
-Run from the **repository root** (not from inside `tests/`):
+Run from the **repository root**:
 
 ```
-ruff check . --fix
 ruff check .
 ```
 
-The last command must print `All checks passed!`. `--fix` only adds missing end-of-file newlines and sorts imports in your older files.
+It must print `All checks passed!`. Long lines are allowed (`E501` is ignored in `pyproject.toml`).
 
 ## Run with Docker
 
@@ -61,7 +62,7 @@ How it is built:
 | Problem | Fix |
 | --- | --- |
 | Build is very slow at "load build context" | `.dockerignore` is missing or in the wrong folder. It must be in the repo root. |
-| `ReadTimeoutError` or `Name or service not known` while pip installs | Network drop. Run `docker compose up --build` again; downloaded packages are cached, so it continues where it stopped. |
+| `ReadTimeoutError` or `Name or service not known` while pip installs | Network drop. Run `docker compose up --build` again; downloaded packages are cached. |
 | `/ask` says the index is empty (503) | Rebuild the index inside Docker: `docker compose run --rm api python -m app.vectorstore` |
 | First `/ask` is slow | It downloads the embedding model once (needs internet); after that it is cached. |
 | `/ask` fails on a key | `.env` is missing or its key names differ from `.env.example`. |
