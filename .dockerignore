@@ -20,3 +20,5 @@ data/feedback.jsonl
 docs
 eval
 day*
+.github
+deploy
