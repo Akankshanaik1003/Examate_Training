@@ -108,7 +108,9 @@ def cane_harvest_window(variety: str, season: str, planting_date: str, records=N
 
 def rag_search(query: str, top_k: int = 3) -> dict:
     """Search the document chunks (Day 8 retrieval). The agent reads the text and writes the answer itself."""
-    from app.rag import retrieve  # imported here so tools.py loads fast and cane_harvest_window works without the index
+    from app.rag import (
+        retrieve,  # imported here so tools.py loads fast and cane_harvest_window works without the index
+    )
 
     try:
         top_k = max(1, min(int(top_k), 5))

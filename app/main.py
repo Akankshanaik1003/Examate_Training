@@ -6,14 +6,16 @@ Docs (auto-generated):   http://127.0.0.1:8000/docs
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel
 
-from app.vectorstore import get_collection, search as semantic_chunks
-
 from app.chat import chat
+from app.graph import ask as agent_ask
+from app.graph import build_graph
+from app.graph import resume as agent_resume
 from app.llm import LLMError
-from app.graph import ask as agent_ask, build_graph, resume as agent_resume
 from app.rag import answer_question
 from app.records import get_by_id, load_all_records
 from app.smart_search import SmartSearch
+from app.vectorstore import get_collection
+from app.vectorstore import search as semantic_chunks
 
 app = FastAPI(title="CaneMitra API", version="0.9.0")
 

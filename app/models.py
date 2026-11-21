@@ -1,5 +1,5 @@
 """models.py - the Record dataclass used by fetch/ingest (Day 3, S2)."""
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 
 
 @dataclass
