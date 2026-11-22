@@ -6,7 +6,7 @@ CaneMitra (Mitra = friend) is a sugarcane question-answering project for farmers
 
 **Status:** Days 1-12 are done. Tags: `week-1` (Days 1-4), `checkpoint-1` (Day 5), `checkpoint-2` (Day 10).
 
-**Live API:** https://RENDER_URL (open [`/health`](https://RENDER_URL/health) for the status and [`/docs`](https://RENDER_URL/docs) for the interactive API page). It runs on Render's free plan and may need about a minute to wake up after a quiet period.
+**Live API:** https://canemitra.onrender.com (open [`/health`](https://canemitra.onrender.com/health) for the status and [`/docs`](https://canemitra.onrender.com/docs) for the interactive API page). It runs on Render's free plan and may need about a minute to wake up after a quiet period.
 
 ![CaneMitra UI](docs/day10_ui.png)
 
