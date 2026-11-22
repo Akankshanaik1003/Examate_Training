@@ -1,0 +1,26 @@
+# Docker image for Render (free web service, 512 MB RAM).
+# Slim packages + ONNX embeddings instead of PyTorch. Not used by docker-compose.yml.
+FROM python:3.11-slim
+
+WORKDIR /app
+ENV PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_DEFAULT_TIMEOUT=300 \
+    PIP_RETRIES=10 \
+    ANONYMIZED_TELEMETRY=False \
+    EMBED_BACKEND=onnx
+
+COPY requirements-render.txt .
+RUN pip install --no-cache-dir -r requirements-render.txt
+
+# The project (see .dockerignore for what is left out)
+COPY . .
+
+# Build the Chroma index (and download the small ONNX embedding model) while the image is built,
+# so the service starts fast and /ask works right after a restart.
+RUN python -m app.vectorstore
+
+EXPOSE 10000
+
+# Render gives the port in $PORT (default 10000)
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-10000}"]
