@@ -11,3 +11,5 @@ eval/.compare_cache.json
 data/chroma/
 
 data/feedback.jsonl
+
+logs/
