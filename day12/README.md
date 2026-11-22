@@ -2,208 +2,190 @@
 
 **Date:** Fri 20 Nov
 **S1:** `.github/workflows/ci.yml` (ruff, pytest, docker build); green badge in the README; 1 pull request from a feature branch merged after CI is green.
-**S2:** Deploy CaneMitra (Hugging Face Spaces); live URL in the README and in the tracker; `/health` works publicly.
+**S2:** Deploy CaneMitra on Render; live URL in the README and in the tracker; `/health` works publicly.
 
 ## Files
 
-| Path                          | What it does                                                                                     |
-| ----------------------------- | ------------------------------------------------------------------------------------------------ |
-| `.github/workflows/ci.yml`    | CI: `lint` (ruff), `test` (pytest) and `docker` (image build, after the other two pass)          |
-| `deploy/space/Dockerfile`     | Docker image for the Hugging Face Space: API on port 7860, Chroma index built during the build   |
-| `deploy/space/README.md`      | The Space settings (`sdk: docker`, `app_port: 7860`). It becomes the README of the Space only    |
-| `deploy/space/sync.ps1`       | Copies the files the Space needs into the Space repository folder                                |
-| `.dockerignore`               | Two new lines (`.github`, `deploy`) so they are not copied into the Docker image                 |
-| `README.md`                   | CI badge, live API link, Day 12 row and section, CI and deployment section                       |
-| `day11/README.md`             | Corrected to match the tests you pushed (23 tests, `pyproject.toml`)                             |
-| `day12/README.md`             | This file                                                                                        |
+| Path                         | What it does                                                                                           |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `.github/workflows/ci.yml`   | CI: `lint` (ruff), `test` (pytest) and `docker` (image build, after the other two pass)                |
+| `Dockerfile.render`          | Slim Docker image for Render: no PyTorch, ONNX embeddings, Chroma index built during the image build   |
+| `requirements-render.txt`    | The 12 packages the API needs (versions copied from `requirements.txt`)                                |
+| `app/embed.py`               | New `EMBED_BACKEND=onnx` option: same MiniLM model through ONNX Runtime instead of PyTorch             |
+| `tests/test_embed.py`        | Test for the ONNX backend (no model download needed)                                                   |
+| `README.md`                  | CI badge, live API link, Day 12 row and section, CI and deployment section                             |
+| `day12/README.md`            | This file                                                                                              |
 
-## Why Hugging Face Spaces and not Render
+## Why the image is different on Render
 
-The API loads PyTorch, sentence-transformers and Chroma. That needs more than the 512 MB of RAM of Render's free plan. A free Hugging Face Space has 16 GB RAM and 2 CPUs and runs Docker, so the same code works. The Space serves the **API** (`/health`, `/docs`, `/ask`, `/agent`). The Streamlit UI still runs on your PC and can use the live API: `$env:CANEMITRA_API_URL="https://HF_USER-canemitra.hf.space"`.
+Render's free plan gives the service **512 MB of RAM**. The normal setup loads PyTorch and sentence-transformers and uses about **880 MB** after the app starts, so it would be killed with "Out of memory". With `EMBED_BACKEND=onnx` the same `all-MiniLM-L6-v2` model runs through ONNX Runtime, PyTorch is never loaded, and the API uses about **260 MB** (measured with `/health` and the real code). Your local setup, Docker compose and the tests are not changed: without the variable, the code uses sentence-transformers as before.
 
 ## Step by step
 
-Run commands in PowerShell from the repository root with `(.venv)` active, unless it says otherwise.
+Use PowerShell in the repository root (`E:\Examate_Training_November\Daily_task\Examate_Training`) with `(.venv)` active.
 
-### Step 1 - Start a feature branch
+### Step 1 - New feature branch
 
 ```
 git checkout main
 git pull
-git checkout -b day12-ci-deploy
+git checkout -b render-deploy
 ```
 
-### Step 2 - Add the files
+### Step 2 - Add and change the files
 
-Create these files with the contents from the chat (folders `.github\workflows`, `deploy\space`, `day12` are new):
+1. Replace `app\embed.py` with the new version.
+2. Create `Dockerfile.render` and `requirements-render.txt` in the repo root (next to `Dockerfile`).
+3. Create `tests\test_embed.py`.
+4. Replace `README.md` (root) and `day12\README.md`.
+5. Delete the old Hugging Face files (Docker Spaces are paid, so they are not used):
+   ```
+   git rm -r deploy
+   ```
 
-```
-.github\workflows\ci.yml
-deploy\space\Dockerfile
-deploy\space\README.md
-deploy\space\sync.ps1
-day12\README.md
-```
-
-Replace `day11\README.md` and `README.md` with the new versions. Add two lines to the end of `.dockerignore`:
-
-```
-.github
-deploy
-```
-
-### Step 3 - Check locally (CI runs the same commands)
+### Step 3 - Check locally
 
 ```
 ruff check .
 python -m pytest -q
 ```
 
-You want `All checks passed!` and `23 passed`.
+You want `All checks passed!` and `24 passed`.
 
-### Step 4 - Create the Hugging Face Space
-
-1. Sign up at https://huggingface.co (free).
-2. Create a write token: **Settings -> Access Tokens -> Create new token -> type Write**. Copy it.
-3. Go to https://huggingface.co/new-space and fill in:
-   - **Space name:** `canemitra`
-   - **License:** any (for example MIT)
-   - **SDK:** Docker, template **Blank**
-   - **Hardware:** CPU basic (free)
-   - **Visibility:** Public (needed so `/health` works for everyone)
-4. Click **Create Space**.
-
-Your Space URL is `https://huggingface.co/spaces/YOUR_HF_USERNAME/canemitra`. The live API address is `https://YOUR_HF_USERNAME-canemitra.hf.space` (lowercase; `_` becomes `-`).
-
-### Step 5 - Set the secrets (before the first build finishes)
-
-In the Space: **Settings -> Variables and secrets**.
-
-| Type | Name | Value |
-| --- | --- | --- |
-| Secret | `GEMINI_API_KEY` | your key (the same one as in your local `.env`) |
-| Variable | `LLM_PROVIDER` | `gemini` |
-| Variable | `GEMINI_MODEL` | `gemini-2.5-flash` |
-
-Use the same names as in your `.env`. If you use Groq, add the Groq key name from your `.env` instead.
-
-### Step 6 - Push the code to the Space
-
-Clone the (empty) Space next to your project folder:
+### Step 4 - Commit and push the branch
 
 ```
-cd ..
-git clone https://huggingface.co/spaces/YOUR_HF_USERNAME/canemitra canemitra-space
-cd Examate_Training
+git commit -m "D12: remove unused Hugging Face Space files"
+
+git add app/embed.py
+git commit -m "D12: optional ONNX embedding backend for low-memory hosting"
+
+git add tests/test_embed.py
+git commit -m "D12: test the ONNX embedding backend"
+
+git add Dockerfile.render requirements-render.txt
+git commit -m "D12: slim Docker image for Render"
+
+git push -u origin render-deploy
 ```
 
-When Git asks for a login: **username** = your Hugging Face username, **password** = the write token from Step 4.
+The first commit is the deletion of `deploy\` that `git rm` staged in Step 2.
 
-Copy the files and push:
+### Step 5 - Create the Render account
+
+1. Open https://render.com and click **Get Started**.
+2. Choose **GitHub** to sign up and authorize Render. (The free web service does not ask for a card.)
+
+### Step 6 - Create the web service
+
+1. In the Render dashboard click **New +**, then **Web Service**.
+2. Choose **Build and deploy from a Git repository**, then **Next**.
+3. Click **Configure account** (or "Connect GitHub"), allow Render to access the repository `Examate_Training` (you can choose "Only select repositories"), then pick `Akankshanaik1003/Examate_Training` and click **Connect**.
+4. Fill in the form:
+
+| Field | Value |
+| --- | --- |
+| Name | `canemitra` |
+| Region | Singapore (closest to India) |
+| Branch | `render-deploy` (you switch it to `main` in Step 11) |
+| Language | Docker |
+| Instance Type | **Free** |
+
+5. Open **Advanced** and set:
+
+| Field | Value |
+| --- | --- |
+| Dockerfile Path | `./Dockerfile.render` |
+| Docker Build Context Directory | `.` |
+| Health Check Path | `/health` |
+| Auto-Deploy | On Commit |
+
+6. Under **Environment Variables** click **Add Environment Variable** three times. Use the same names as in your `.env`:
+
+| Key | Value |
+| --- | --- |
+| `LLM_PROVIDER` | `gemini` |
+| `GEMINI_API_KEY` | your key |
+| `GEMINI_MODEL` | `gemini-2.5-flash` |
+
+7. Click **Deploy Web Service** (or **Create Web Service**).
+
+### Step 7 - Wait for the build
+
+Render opens the **Logs**. The first build takes about 5 to 10 minutes: it installs the packages, downloads the small ONNX embedding model and builds the Chroma index (you should see a line like `Indexed 97 chunks into data/chroma`). The build is done when the log shows `Your service is live`. The URL is at the top of the page, for example `https://canemitra.onrender.com` (Render may add letters if the name is taken).
+
+### Step 8 - Test the live API
+
+In the browser, replace `YOUR-URL`:
+
+- `https://YOUR-URL/health` must show `{"status":"ok","records":58}`. Open it in an incognito window too.
+- `https://YOUR-URL/docs` opens the API page. Open **POST /ask**, click **Try it out**, enter `{"question": "Which variety tolerates saline soil?"}` and click **Execute**. You should get an answer with citations.
+
+### Step 9 - Put the live URL in the README
+
+In VS Code open `README.md`, press `Ctrl+H`, find `RENDER_URL` and replace it with your host **without** `https://`, for example `canemitra.onrender.com`. Click **Replace All** (3 places) and save. Click the links in the preview to check them. Also write the URL in `day12\README.md` if you want.
+
+### Step 10 - Commit, push and pull request
 
 ```
-Set-ExecutionPolicy -Scope Process Bypass
-.\deploy\space\sync.ps1 -SpaceDir ..\canemitra-space
-cd ..\canemitra-space
-git add .
-git commit -m "Deploy CaneMitra API"
-git push
-cd ..\Examate_Training
-```
-
-The Space now builds. Open the Space page and watch **Logs**. The first build takes about 10 minutes (it downloads CPU PyTorch, installs the packages, downloads the embedding model and builds the Chroma index). When the status says **Running**, continue.
-
-### Step 7 - Test the live API
-
-In a browser (replace the name):
-
-- `https://YOUR_HF_USERNAME-canemitra.hf.space/health` must show `{"status":"ok","records":58}`.
-- `https://YOUR_HF_USERNAME-canemitra.hf.space/docs` opens the API page. Try `POST /ask` with `{"question": "Which variety tolerates saline soil?"}` and check you get an answer with citations.
-
-Or in PowerShell:
-
-```
-curl https://YOUR_HF_USERNAME-canemitra.hf.space/health
-```
-
-Open the `/health` link in a private (incognito) window too, to confirm it works without logging in.
-
-### Step 8 - Put the live URL in the README
-
-In VS Code open `README.md`, press `Ctrl+H` and replace `HF_USER` with your lowercase Hugging Face username (it appears once, in the **Live API** line). Do the same in `day12\README.md`. Click the link to check it.
-
-### Step 9 - Commit and push the branch
-
-```
-git status
-git add .github/workflows/ci.yml
-git commit -m "D12: GitHub Actions CI (ruff, pytest, docker build)"
-
-git add deploy/space/Dockerfile deploy/space/README.md deploy/space/sync.ps1
-git commit -m "D12: Hugging Face Space deployment files"
-
-git add .dockerignore
-git commit -m "D12: keep .github and deploy out of the Docker image"
-
-git add day11/README.md
-git commit -m "D12: correct day 11 README to match the tests"
+git add README.md
+git commit -m "D12: live URL, CI badge and Render deployment section"
 
 git add day12/README.md
-git commit -m "D12: day 12 README"
+git commit -m "D12: day 12 README for Render"
 
-git add README.md
-git commit -m "D12: CI badge, live URL and deployment section"
-
-git push -u origin day12-ci-deploy
+git push
 ```
 
-### Step 10 - Open the pull request and wait for CI
+Create the pull request:
 
 ```
-gh pr create --base main --head day12-ci-deploy --title "D12: CI and deployment" --body "Adds GitHub Actions CI (ruff, pytest, docker build), the Hugging Face Space deployment files, the live URL and the CI badge."
+gh pr create --base main --head render-deploy --title "D12: Render deployment and ONNX embeddings" --body "Adds a low-memory ONNX embedding option, a slim Dockerfile for Render, the live URL and the CI badge."
 ```
 
-(No `gh`? On GitHub click **Compare & pull request** on the banner for `day12-ci-deploy`.)
+No `gh`? On GitHub open the repository and click **Compare & pull request** on the yellow banner.
 
-On the pull request page, wait at the bottom for the checks: `Lint (ruff)`, `Tests (pytest)` and `Docker build`. The Docker job starts after the other two and can take 5 to 10 minutes. Wait until all three show a **green check**. Take a screenshot if you want proof.
+On the pull request page wait for the three checks (`Lint (ruff)`, `Tests (pytest)`, `Docker build`). When all three have a green check, click **Merge pull request**, then **Confirm merge**, then **Delete branch**.
 
-If one is red: click **Details**, read the first red line, fix it on the same branch, commit and `git push`. CI runs again automatically.
+### Step 11 - Point Render to `main`
 
-### Step 11 - Merge
+After the merge the branch `render-deploy` is deleted, so Render must follow `main`:
 
-When all checks are green, click **Merge pull request -> Confirm merge** on GitHub (or `gh pr merge --merge --delete-branch`). Then:
+1. Render dashboard, open the `canemitra` service, then **Settings**.
+2. Find **Branch**, change it to `main`, and save. Render redeploys automatically.
+
+Locally:
 
 ```
 git checkout main
 git pull
-git branch -d day12-ci-deploy
 ```
 
-The merge starts CI again on `main`. When it is green, the badge at the top of the README turns green too. Open https://github.com/Akankshanaik1003/Examate_Training and check the badge.
+### Step 12 - Final check and tracker
 
-### Step 12 - Tracker
-
-Paste the live URL (`https://YOUR_HF_USERNAME-canemitra.hf.space`) and the pull request link in your tracker for D12.
+- The CI badge at the top of the README on GitHub is green (after the run on `main` finishes).
+- `https://YOUR-URL/health` still works after the redeploy.
+- Paste the live URL and the pull request link in your tracker for D12.
 
 ## Checklist
 
-- [ ] `.github/workflows/ci.yml` pushed, CI jobs lint, test and docker are green
-- [ ] Green badge shows at the top of the README
-- [ ] One pull request from `day12-ci-deploy` merged after CI was green
-- [ ] Space status is Running and `/health` works in an incognito window
+- [ ] Pull request from `render-deploy` merged after the 3 checks were green
+- [ ] Green CI badge at the top of the README
+- [ ] Render service is live, `/health` works in an incognito window
 - [ ] `/ask` on the live `/docs` page returns an answer with citations
 - [ ] Live URL is in the README and in the tracker
+- [ ] Render branch is set to `main`
 
 ## Troubleshooting
 
 | Problem | Fix |
 | --- | --- |
-| CI `Lint` fails | Run `ruff check .` locally and fix the lines it shows (`ruff check . --fix` fixes simple ones). |
-| CI `Tests` fails but passes locally | Read the log. Tests must not need `.env`, `data/chroma` or the internet. |
+| Render log: `Out of memory (used over 512Mi)` | Check the Environment tab has no `EMBED_BACKEND` override, and that the service uses `./Dockerfile.render`, not `Dockerfile`. |
+| Build fails at `python -m app.vectorstore` | Read the line above the error. A network error while downloading the ONNX model: click **Manual Deploy**, then **Clear build cache & deploy**. |
+| Build error `failed to read dockerfile` | Dockerfile Path must be `./Dockerfile.render` and the branch must contain that file (`git push` first). |
+| Service starts but `/health` times out | Health Check Path must be `/health`; the first start after a sleep can take about a minute. |
+| `/ask` returns 503 | `GEMINI_API_KEY` is missing or misspelled in the Environment tab. Fix it and Render restarts the service. |
+| First request after a quiet time is slow | The free service sleeps after about 15 minutes. The next request wakes it. |
+| CI `Lint` fails | Run `ruff check .` locally (`ruff check . --fix` fixes simple things). |
+| CI `Tests` fails but passes locally | Read the log; tests must not need `.env`, `data/chroma` or the internet. |
 | CI `Docker build` fails | Run `docker build -t canemitra:ci .` locally to see the same error. |
-| Space build error: `Dockerfile not found` | `sync.ps1` was not run, or files were copied into a subfolder. The Space repo root must contain `Dockerfile`, `README.md`, `app/`, `data/`, `prompts/`. |
-| Space build error in `python -m app.vectorstore` | Check that `data/chunks.json` is in the Space repo (`sync.ps1` copies it). |
-| Space shows "Runtime error" or "Building" for a long time | Open **Logs**. A network error during `pip install` is fixed with **Settings -> Factory rebuild**. |
-| `/health` works but `/ask` gives 503 | The secret is missing or misspelled. Check **Settings -> Variables and secrets**, then restart the Space. |
-| `/health` is slow the first time | A free Space sleeps after a quiet period; the first request wakes it (about a minute). |
-| `git push` to the Space asks for a password again | Use the write token (not your account password). |
