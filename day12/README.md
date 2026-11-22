@@ -4,6 +4,8 @@
 **S1:** `.github/workflows/ci.yml` (ruff, pytest, docker build); green badge in the README; 1 pull request from a feature branch merged after CI is green.
 **S2:** Deploy CaneMitra on Render; live URL in the README and in the tracker; `/health` works publicly.
 
+**Live API:** https://canemitra.onrender.com ([`/health`](https://canemitra.onrender.com/health), [`/docs`](https://canemitra.onrender.com/docs))
+
 ## Files
 
 | Path                         | What it does                                                                                           |
@@ -112,7 +114,7 @@ The first commit is the deletion of `deploy\` that `git rm` staged in Step 2.
 
 ### Step 7 - Wait for the build
 
-Render opens the **Logs**. The first build takes about 5 to 10 minutes: it installs the packages, downloads the small ONNX embedding model and builds the Chroma index (you should see a line like `Indexed 97 chunks into data/chroma`). The build is done when the log shows `Your service is live`. The URL is at the top of the page, for example `https://canemitra.onrender.com` (Render may add letters if the name is taken).
+Render opens the **Logs**. The first build takes about 5 to 10 minutes: it installs the packages, downloads the small ONNX embedding model and builds the Chroma index (you should see a line like `Indexed 97 chunks into data/chroma`). The build is done when the log shows `Your service is live`. The URL is at the top of the page, for example `https://canemitra.onrender.com`.
 
 ### Step 8 - Test the live API
 
