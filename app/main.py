@@ -3,9 +3,15 @@
 Run from the repo root:  uvicorn app.main:app --reload
 Docs (auto-generated):   http://127.0.0.1:8000/docs
 """
-from fastapi import FastAPI, HTTPException, Query
+import json
+import os
+import time
+
+from fastapi import FastAPI, HTTPException, Query, Request, Response
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
+from app import cache, guard, metrics
 from app.chat import chat
 from app.graph import ask as agent_ask
 from app.graph import build_graph
@@ -18,6 +24,63 @@ from app.vectorstore import get_collection
 from app.vectorstore import search as semantic_chunks
 
 app = FastAPI(title="CaneMitra API", version="0.9.0")
+
+GUARDED_PATHS = {"/chat", "/ask"}
+
+
+@app.middleware("http")
+async def production_layer(request: Request, call_next):
+    """Day 13: input limits + injection check, cache, and latency/token logging for /chat and /ask."""
+    if request.method != "POST" or request.url.path not in GUARDED_PATHS:
+        return await call_next(request)
+
+    path = request.url.path
+    body_bytes = await request.body()
+    try:
+        data = json.loads(body_bytes or b"{}")
+    except ValueError:
+        data = {}
+    if not isinstance(data, dict):
+        data = {}
+    question = str(data.get("question", ""))
+
+    ok, msg = guard.check_input(question)
+    if not ok:
+        return JSONResponse(status_code=400, content={"detail": msg})
+
+    # Skip cache and log file while pytest runs, so the tests stay independent.
+    testing = "PYTEST_CURRENT_TEST" in os.environ
+    key = f"{path}|{question.strip().lower()}|{data.get('top_k')}|{data.get('prompt_version')}"
+
+    start = time.perf_counter()
+    if not testing:
+        cached = cache.get(key)
+        if cached is not None:
+            metrics.log_request(path, question, (time.perf_counter() - start) * 1000, 0, True)
+            return JSONResponse(content=cached)
+
+    async def receive():
+        return {"type": "http.request", "body": body_bytes, "more_body": False}
+
+    response = await call_next(Request(request.scope, receive))
+    resp_body = b"".join([chunk async for chunk in response.body_iterator])
+    ms = (time.perf_counter() - start) * 1000
+
+    if response.status_code == 200 and not testing and question.strip():
+        try:
+            cache.put(key, json.loads(resp_body))
+        except ValueError:
+            pass
+        tokens = metrics.estimate_tokens(question + resp_body.decode("utf-8", "ignore"))
+        metrics.log_request(path, question, ms, tokens, False)
+
+    return Response(
+        content=resp_body,
+        status_code=response.status_code,
+        headers={k: v for k, v in response.headers.items() if k.lower() != "content-length"},
+        media_type=response.media_type,
+    )
+
 
 RECORDS = load_all_records()
 SEARCH = SmartSearch(RECORDS)
