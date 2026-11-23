@@ -1,0 +1,14 @@
+# Slim dependency list for the Render deployment (no PyTorch / sentence-transformers).
+# The API uses the ONNX embedding backend instead (EMBED_BACKEND=onnx), which fits in Render's 512 MB.
+chromadb==1.5.9
+fastapi==0.162.0
+starlette==1.10.0
+uvicorn==0.54.0
+pydantic==2.14.3
+langgraph==1.2.22
+numpy==2.4.6
+pandas==3.1.1
+scikit-learn==1.9.1
+scipy==1.17.1
+onnxruntime==1.32.0
+requests==2.34.2
