@@ -1,5 +1,7 @@
 # CaneMitra
 
+[![CI](https://github.com/Akankshanaik1003/Examate_Training/actions/workflows/ci.yml/badge.svg)](https://github.com/Akankshanaik1003/Examate_Training/actions/workflows/ci.yml)
+
 **Problem:** To choose a sugarcane variety, a farmer or advisor has to dig through long university PDFs. The guides are hard to search, they are written for researchers, and an answer rarely says where it came from.
 
 **Solution:** CaneMitra (Mitra = friend) answers sugarcane questions from MPKV and TNAU guides. It cleans the sources into one format and serves them through a command line, a web API (keyword search, semantic search, RAG answers with citations, and an agent with tools) and a Streamlit chat with a season timeline. When the documents do not cover a question, it says "I don't know" instead of guessing. Tests, lint, Docker and basic production safeguards (input limits, injection check, cache, latency and token logging) are set up.
@@ -7,6 +9,8 @@
 [Watch the demo video](PASTE_YOUR_VIDEO_LINK)
 
 **Status:** Days 1-13 are done. Tags: `week-1` (Days 1-4), `checkpoint-1` (Day 5), `checkpoint-2` (Day 10).
+
+**Live API:** https://canemitra.onrender.com (open [`/health`](https://canemitra.onrender.com/health) for the status and [`/docs`](https://canemitra.onrender.com/docs) for the interactive API page). It runs on Render's free plan and may need about a minute to wake up after a quiet period.
 
 ![CaneMitra UI](docs/day10_ui.png)
 
@@ -83,8 +87,8 @@ Each day has its own folder with a README that explains the task and lists the e
 | Day 8  | [`day08/`](https://github.com/Akankshanaik1003/Examate_Training/blob/main/day08/README.md)   | RAG: `POST /ask` with citations and "I don't know", 15-question evaluation of 2 configs               |
 | Day 9  | [`day09/`](https://github.com/Akankshanaik1003/Examate_Training/blob/main/day09/README.md)   | Agent with tools: harvest-window tool, hand-written loop, LangGraph version, `POST /agent`            |
 | Day 10 | [`day10/`](https://github.com/Akankshanaik1003/Examate_Training/blob/main/day10/README.md)   | Streamlit chat UI: calls `/ask` or `/agent`, citations, thumbs up/down, season timeline bar           |
-| Day 11 | [`day11/`](https://github.com/Akankshanaik1003/Examate_Training/blob/main/day11/README.md)   | 42 pytest tests (fake LLM), ruff lint, Docker and docker compose                                      |
-| Day 12 | [`day12/`](https://github.com/Akankshanaik1003/Examate_Training/blob/main/day12/README.md)   | WRITE WHAT YOU BUILT ON DAY 12 (copy one line from `day12/README.md`)                                 |
+| Day 11 | [`day11/`](https://github.com/Akankshanaik1003/Examate_Training/blob/main/day11/README.md)   | 29 pytest tests (fake LLM and index), ruff lint, Docker and docker compose                                      |
+| Day 12 | [`day12/`](https://github.com/Akankshanaik1003/Examate_Training/blob/main/day12/README.md)   | GitHub Actions CI (ruff, pytest, docker build) with a green badge, a merged pull request, live deploy on Render |
 | Day 13 | [`day13/`](https://github.com/Akankshanaik1003/Examate_Training/blob/main/day13/README.md)   | Input limits and injection check, response cache, latency and token logging, injection test, production notes, README rewrite, resume bullets |
 
 ### Day 1 - Project idea and interactive menu
@@ -160,13 +164,16 @@ Each day has its own folder with a README that explains the task and lists the e
 
 ### Day 11 - Tests, lint and Docker
 
-- `tests/`: **42 pytest tests** for records, smart search, the harvest-window tool, `/health`, `/records`, `/search`, `/questions`, `/ask` and `/agent` (including the approval step). A fake LLM and a fake Chroma index replace the real ones, so the tests need no key, no network and no model download.
-- `ruff.toml`: lint settings; `ruff check .` passes.
+- `tests/`: **pytest tests** (29 in total after Day 13) for records, smart search, the harvest-window tool, `/health`, `/records`, `/search`, `/questions`, `/ask` and `/agent` (including the approval step). A fake LLM and a fake Chroma index replace the real ones, so the tests need no key, no network and no model download.
+- `pyproject.toml` and `requirements-dev.txt`: ruff and pytest settings and tools; `ruff check .` passes.
 - `Dockerfile`, `.dockerignore`, `docker-compose.yml`: start the API and the UI with `docker compose up --build`. CPU-only PyTorch keeps the image small; `./data` is mounted so the containers use your Chroma index.
 
-### Day 12 - WRITE THE DAY 12 TITLE
+### Day 12 - CI and deployment
 
-- WRITE 2-4 BULLETS FROM `day12/README.md`: what was built, which files, what it does.
+- `.github/workflows/ci.yml`: GitHub Actions runs on every push to `main` and every pull request: **lint** (`ruff check .`), **tests** (`pytest`) and a **Docker build**. The badge at the top shows the status of `main`.
+- A feature branch (`render-deploy`) merged through a pull request after CI was green.
+- **Deployed on Render** (free web service, Docker). `Dockerfile.render` and `requirements-render.txt` build a slim image. Render's free plan has 512 MB of RAM and the normal setup (PyTorch) needs about 880 MB, so the deployed API uses the **ONNX** version of the same embedding model (`EMBED_BACKEND=onnx` in `app/embed.py`), which needs about 260 MB. The Chroma index is built while the image is built.
+- Live API: see the link at the top. `/health` works without logging in.
 
 ### Day 13 - Production basics, README and resume
 
@@ -193,9 +200,12 @@ Each day has its own folder with a README that explains the task and lists the e
 ├── .dockerignore
 ├── .env.example             # key names only; copy to .env
 ├── requirements.txt
-├── pytest.ini
-├── ruff.toml
+├── pyproject.toml           # ruff and pytest settings
+├── requirements-dev.txt     # pytest, httpx, ruff
 ├── Dockerfile
+├── Dockerfile.render        # slim image for Render (Day 12)
+├── requirements-render.txt  # slim packages for Render, no PyTorch (Day 12)
+├── .github/workflows/ci.yml # CI: ruff, pytest, docker build (Day 12)
 ├── docker-compose.yml
 ├── day01/ ... day13/        # one README per day (day01 and day02 also hold scripts)
 ├── app/                     # shared package
@@ -208,7 +218,7 @@ Each day has its own folder with a README that explains the task and lists the e
 │   ├── llm.py               # Gemini / Groq wrapper (Day 6)
 │   ├── chat.py              # /chat prompt building and reply parsing (Day 6)
 │   ├── chunking.py          # documents -> chunks (Day 7)
-│   ├── embed.py             # embedding model (Day 7)
+│   ├── embed.py             # embedding model: sentence-transformers or ONNX (Day 7, Day 12)
 │   ├── vectorstore.py       # Chroma index and semantic search (Day 7)
 │   ├── rag.py               # retrieve + answer with citations (Day 8)
 │   ├── tools.py             # agent tools: cane_harvest_window, rag_search (Day 9)
@@ -222,11 +232,14 @@ Each day has its own folder with a README that explains the task and lists the e
 │   ├── app.py               # chat, citations, thumbs, timeline chart
 │   ├── timeline.py          # planting, fertiliser splits, harvest window
 │   └── feedback.py          # saves thumbs to data/feedback.jsonl
-├── tests/                   # pytest tests (Days 11 and 13)
-│   ├── conftest.py          # fake LLM, fake index, fake agent graph
+├── tests/                   # pytest tests (Days 11-13)
+│   ├── conftest.py          # API test client
 │   ├── test_records.py
-│   ├── test_tools.py
+│   ├── test_search.py
 │   ├── test_api.py
+│   ├── test_chat.py         # /ask with a fake RAG function
+│   ├── test_agent.py        # agent loop with a fake LLM
+│   ├── test_embed.py        # ONNX embedding backend (Day 12)
 │   └── test_guard.py        # injection and length tests (Day 13)
 ├── prompts/                 # system prompt v1/v2 and task prompts (Day 6)
 ├── eval/                    # prompt compare (Day 6), semantic eval (Day 7), RAG eval (Day 8)
@@ -361,7 +374,7 @@ python -m pytest
 ruff check .
 ```
 
-The tests use a fake LLM and a fake index, so they need no key, no network and no model download. The Day 13 tests (`tests/test_guard.py`) check the input guard and that `/ask` and `/chat` return 400 for an injection phrase or a question over 500 characters. Run `ruff` from the repository root.
+The 29 tests use fakes for the LLM and the index, so they need no key, no network and no model download. The Day 13 tests (`tests/test_guard.py`) check the input guard and that `/ask` and `/chat` return 400 for an injection phrase or a question over 500 characters. Run `ruff` from the repository root.
 
 ## Run with Docker
 
@@ -381,6 +394,23 @@ Stop with `Ctrl+C`, then `docker compose down`. Notes:
 - The first `/ask` downloads the embedding model once; it is kept in a Docker volume.
 - `.env` is passed in when the containers start and is never copied into the image.
 - If the build stops with a network error, run the same command again; downloaded packages are cached.
+
+## Continuous integration and deployment
+
+**CI.** `.github/workflows/ci.yml` runs on every push to `main` and on every pull request. Three jobs: `lint` (`ruff check .`), `test` (`pytest`) and `docker` (builds the image, only after lint and tests pass). Open the **Actions** tab on GitHub to see the runs.
+
+**Pull requests.** Since Day 12, changes go on a feature branch, are pushed, and are merged through a pull request only after CI is green.
+
+**Live deployment (Render).** The API runs as a Docker web service on Render's free plan, built from `Dockerfile.render`. Settings in the Render dashboard: Dockerfile path `./Dockerfile.render`, health check path `/health`, branch `main` with auto-deploy on every push. Secrets (`GEMINI_API_KEY`) and variables (`LLM_PROVIDER`, `GEMINI_MODEL`) are set in the Render dashboard and are never stored in this repository.
+
+To try the same slim image on your PC:
+
+```
+docker build -f Dockerfile.render -t canemitra-render .
+docker run --rm -p 10000:10000 --env-file .env canemitra-render
+```
+
+Then open [http://localhost:10000/health](http://localhost:10000/health).
 
 ## Data
 
@@ -424,6 +454,7 @@ Data notes:
 - **Season timeline (Day 10):** the crop durations (adsali 18, preseasonal 15, suru 12 months), the fertiliser split days (0/45/90, plus 135 for adsali and preseasonal) and the 30-day harvest window are placeholder assumptions in `ui/timeline.py`. They are not yet verified against the MPKV guide. (The agent's `cane_harvest_window` tool uses the durations from the records instead.)
 - Agent memory (`MemorySaver`) is in RAM and is lost when the server restarts.
 - Thumbs feedback is only logged to a local file. Nothing uses it yet to improve answers.
+- **Live deployment (Day 12):** the free Render service runs the API only (not the Streamlit UI), goes to sleep after about 15 minutes without requests and needs about a minute to wake up. Agent memory resets when it restarts. It uses the ONNX version of the embedding model to fit in 512 MB, so retrieval scores can differ slightly from a local run with PyTorch. `/ask` and `/agent` use my own LLM key, so heavy public use can hit the key's free quota.
 - The tests use a fake LLM, so they check our code and not the quality of real model answers.
 - **Day 13 safeguards:** the cache is in memory and is cleared on restart; the injection check is keyword based and can be bypassed by rewording; token counts are estimates (about 4 characters per token); `/agent` has no cache or injection check yet.
 
