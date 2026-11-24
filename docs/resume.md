@@ -2,4 +2,4 @@
 
 - Built a sugarcane Q&A system (Python, FastAPI, Chroma, sentence-transformers) that answers from MPKV and TNAU guides with verified citations and a correct "I don't know" on 3/3 out-of-scope questions; evaluated 2 chunking/top-k configs on 15 questions (best: 60% overall, 75% retrieval hit).
 - Developed a LangGraph agent with tool calling (harvest-window calculator, RAG search), per-thread memory and a human-approval step, plus a Streamlit chat with citations, feedback buttons and a season timeline.
-- Productionised the service with 47 pytest tests, ruff lint, Docker Compose, input limits, a prompt-injection filter and a response cache (___% hit rate, ___ ms vs ___ ms latency) with per-request latency and token logging.
+- Productionised the service with 28 pytest tests, ruff lint, GitHub Actions CI, Docker, input limits, a prompt-injection filter (blocked with HTTP 400) and a response cache (23.1% hit rate on a 13-request test; repeat questions answered in under 1 ms vs about 10.7 s for an LLM call) with per-request latency and token logging.
